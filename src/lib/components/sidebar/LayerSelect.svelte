@@ -43,7 +43,7 @@
         {:else}
             <span>+</span>
         {/if}
-        County Data
+        Demographic Data
     </button>
     {#if dropdownOpen}
     <select class="layer-select" bind:value={$choroSettings.selectedLayer}>

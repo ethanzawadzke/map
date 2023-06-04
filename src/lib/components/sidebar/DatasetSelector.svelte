@@ -29,7 +29,7 @@
         {:else}
             <span>+</span>
         {/if}
-        Datasets 
+        Facility Locations 
     </button>
 
     {#if dropdownOpen}
