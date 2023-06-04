@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+}
+
+.mapboxgl-control-container {
+    display: none;
+}
+
+/* This will hide the scrollbar when not in use */
+body::-webkit-scrollbar {
+    width: 10px;
+    /* Adjust scrollbar width */
+}
+
+/* This is the scrollbar track (the background) */
+body::-webkit-scrollbar-track {
+    background: transparent;
+    /* Make scrollbar background transparent */
+}
+
+/* This is the scrollbar handle (the part you drag) */
+body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black */
+    border-radius: 20px;
+    /* Make it round */
+    border: 2px solid transparent;
+    /* Add some space between the scrollbar and the edge */
+}
+
+/* Change the scrollbar color when dragging */
+body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Slightly darker semi-transparent black */
+}
+
+.mapboxgl-popup-content {
+    border-radius: .5rem;
+}
