@@ -53,6 +53,13 @@
                 url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
             });
 
+            function isPointInCircle(point, circleCenter, radius) {
+                const dx = circleCenter.lng - point.lng;
+                const dy = circleCenter.lat - point.lat;
+                return dx * dx + dy * dy <= radius * radius;
+            }
+
+
             function addContextMenuHandler(circleObject, map, popup) {
             circleObject.circle.on('contextmenu', function(e) {
                 e.preventDefault();
@@ -149,6 +156,73 @@
                 const buttonContainer = document.createElement('div');
                 buttonContainer.appendChild(deleteButton);
                 buttonContainer.appendChild(toggleEditButton);
+
+                const countButton = document.createElement('button');
+                countButton.textContent = 'Count Features';
+                countButton.style.cssText = `
+                    display: block;
+                    background-color: white;
+                    color: black;
+                    padding: 5px 10px;
+                    border: none;
+                    text-align: left;
+                    cursor: pointer;
+                    width: 100%;
+                    box-sizing: border-box;
+                `;
+                countButton.onmouseover = function() {
+                    this.style.backgroundColor = '#0078D7';
+                    this.style.color = 'white';
+                };
+                countButton.onmouseout = function() {
+                    this.style.backgroundColor = 'white';
+                    this.style.color = 'black';
+                };
+                countButton.onclick = function() {
+                    // Get the circle's center and radius
+                    let center = circleObject.circle.getCenter();
+                    let radius = circleObject.circle.getRadius();  // Assuming this is in meters
+
+                    // Convert the circle center to a LngLat object
+                    let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
+
+                    // Get all active layers
+                    let activeLayers = $datasetState.filter(dataset => dataset.enabled);
+
+                    // Initialize the total feature count
+                    let totalFeatureCount = 0;
+
+                    // For each active layer...
+                    for (let dataset of activeLayers) {
+                        // Query all rendered features in the current layer without specifying bounds
+                        let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
+
+                        // For each feature in the current layer...
+                        for (let feature of features) {
+                            // Convert the feature coordinates to a LngLat object
+                            let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
+
+                            // Calculate the distance from the circle center to the feature in meters
+                            let distance = lngLatCenter.distanceTo(lngLatFeature);
+
+                            // If the distance is less than the circle radius, the feature lies within the circle
+                            if (distance < radius) {
+                                // Increase the total feature count
+                                totalFeatureCount++;
+                            }
+                        }
+                    }
+                    popup.remove();
+                    window.alert("Total feature count: " + totalFeatureCount/2);
+                };
+
+
+
+
+
+
+
+                buttonContainer.appendChild(countButton);
 
                 popup.setLngLat(e.lngLat)
                     .setDOMContent(buttonContainer)
