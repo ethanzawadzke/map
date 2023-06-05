@@ -207,13 +207,13 @@ function addTileset(map, layer) {
 async function addGeoJson(map, layer) {
     let data;
 
-    // Only fetch and filter data if layer keyword is "RT locations" or "OP locations"
-    if (layer.keyword === 'RT locations' || layer.keyword === 'OP locations') {
+    // Only fetch and filter data if layer keyword is "RTC locations" or "OP locations"
+    if (layer.keyword === 'RTC locations' || layer.keyword === 'OP locations') {
         let response = await fetch(layer.data);
         let geojsonData = await response.json();
 
         // Determine which property to filter on based on the keyword
-        let propertyToFilter = layer.keyword === 'RT locations' ? 'BEDS' : 'SLOTS';
+        let propertyToFilter = layer.keyword === 'RTC locations' ? 'BEDS' : 'SLOTS';
 
         // Filter data
         data = filterGeoJsonData(geojsonData, propertyToFilter);
