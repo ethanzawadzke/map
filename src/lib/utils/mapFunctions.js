@@ -244,11 +244,18 @@ function addSpecificLayer(map, layer, suffix, color, feature) {
                 'text-field': ['format',
                     ['get', 'BEDS'], { 'font-scale': 0.8 }, ' BEDS\n',
                     ['get', 'SLOTS'], { 'font-scale': 0.8 }, ' SLOTS'],
-                'text-size': 12,
-                'text-offset': [0, 2.3] // Move the label 2 units down
+                'text-offset': [0, 2.3], // Move the label 2 units down
+                'text-size': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    10, 0,     // At zoom level 10 or less, text size is 0 (invisible)
+                    12, 12     // At zoom level 14 or more, text size is 12
+                ]
             },
             'paint': {
-                'text-color': '#000'
+                'text-color': '#000',
+                // Increase text size as zoom level increases
             }
         });
     }
