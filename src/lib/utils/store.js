@@ -93,7 +93,7 @@ export const datasetState = writable([
         enabled: false,
         color: "#E79600",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/8a7cd9525aaa2a7b360e4b43c4f1c38dd12d379b/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20Psych%20Hospitals.geojson",
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20Psych%20Hospitals%20%20(1).geojson",
     },
     {
         layerTitle: "BEDS",
