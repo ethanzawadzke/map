@@ -140,21 +140,45 @@ function addTileset(map, layer) {
         'url': `mapbox://${layer.tilesetId}`
     });
 
-    if (!map.getLayer(layer.layerTitle)) {
-        map.addLayer({
-            'id': layer.layerTitle,
-            'type': 'circle',
-            'source': layer.layerTitle,
-            'source-layer': layer.sourcelayer,
-            'paint': {
-                'circle-radius': 5,
-                'circle-color': layer.color
+    if (layer.keyword === 'realestate') {
+        map.loadImage('https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/icon.png', function (error, image) {
+            if (error) throw error;
+            map.addImage('custom-marker', image);
+
+            if (!map.getLayer(layer.layerTitle)) {
+                map.addLayer({
+                    'id': layer.layerTitle,
+                    'type': 'symbol',
+                    'source': layer.layerTitle,
+                    'source-layer': layer.sourcelayer,
+                    'layout': {
+                        'icon-image': 'custom-marker',
+                        // Optional: change scale of custom icon
+                        'icon-size': 1
+                    }
+                });
+            } else {
+                console.warn(`Layer ${layer.layerTitle} already exists`);
             }
         });
     } else {
-        console.warn(`Layer ${layer.layerTitle} already exists`);
+        if (!map.getLayer(layer.layerTitle)) {
+            map.addLayer({
+                'id': layer.layerTitle,
+                'type': 'circle',
+                'source': layer.layerTitle,
+                'source-layer': layer.sourcelayer,
+                'paint': {
+                    'circle-radius': 5,
+                    'circle-color': layer.color
+                }
+            });
+        } else {
+            console.warn(`Layer ${layer.layerTitle} already exists`);
+        }
     }
 }
+
 
 async function addGeoJson(map, layer) {
     let data;
@@ -262,9 +286,9 @@ function addSpecificLayer(map, layer, suffix, color, feature) {
 }
 
 function addGenericLayer(map, layer) {
-    // Base layer properties
-    let layerProperties = {
+    map.addLayer({
         'id': layer.layerTitle,
+        'type': 'circle',
         'source': layer.layerTitle,
         'paint': {
             'circle-radius': [
@@ -279,22 +303,8 @@ function addGenericLayer(map, layer) {
             'circle-stroke-width': 1,
             'circle-stroke-color': 'white'
         }
-    };
-
-    // If the layer name is "x", use a custom map icon
-    if (layerProperties.keyword === 'realestate') {
-        layerProperties.type = 'symbol';
-        layerProperties.layout = {
-            'icon-image': 'cat', // the id used when you called map.addImage
-            'icon-size': 0.5 // adjust as needed
-        };
-    } else {
-        layerProperties.type = 'circle';
-    }
-
-    map.addLayer(layerProperties);
+    });
 }
-
 
 function addGeoJsonCluster(map, layer) {
     if (layer.cluster) {

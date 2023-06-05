@@ -48,16 +48,6 @@
                 url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
             });
 
-            map.loadImage(
-                'https://docs.mapbox.com/mapbox-gl-js/assets/cat.png',
-                (error, image) => {
-                    if (error) throw error;
-                    
-                    // Add the image to the map style.
-                    map.addImage('cat', image);
-                }
-            );
-
             function addContextMenuHandler(circleObject, map, popup) {
             circleObject.circle.on('contextmenu', function(e) {
                 e.preventDefault();
