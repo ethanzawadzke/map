@@ -156,10 +156,26 @@ function addTileset(map, layer) {
     }
 }
 
-function addGeoJson(map, layer) {
+async function addGeoJson(map, layer) {
+    let data;
+
+    // Only fetch and filter data if layer keyword is "sud/op beds" or "sup/op slots"
+    if (layer.keyword === 'sud/op beds' || layer.keyword === 'sup/op slots') {
+        let response = await fetch(layer.data);
+        let geojsonData = await response.json();
+
+        // Determine which property to filter on based on the keyword
+        let propertyToFilter = layer.keyword === 'sud/op beds' ? 'BEDS' : 'SLOTS';
+
+        // Filter data
+        data = filterGeoJsonData(geojsonData, propertyToFilter);
+    } else {
+        data = layer.data;
+    }
+
     map.addSource(layer.layerTitle, {
         type: "geojson",
-        data: layer.data,
+        data: data,
         cluster: layer.cluster,
         clusterMaxZoom: layer.clusterMaxZoom,
         clusterRadius: layer.clusterRadius
@@ -172,6 +188,22 @@ function addGeoJson(map, layer) {
         console.warn(`Layer ${layer.layerTitle} already exists`);
     }
 }
+
+// Filter function now takes a property name to filter on
+function filterGeoJsonData(geojsonData, property) {
+    // Check and make sure features is an array as expected
+    if (!Array.isArray(geojsonData.features)) {
+        throw new Error('Expected geojsonData to have a features property that is an array');
+    }
+
+    // Filter out features where the given property is 0
+    geojsonData.features = geojsonData.features.filter(feature => {
+        return feature.properties[property] !== 0;
+    });
+
+    return geojsonData;
+}
+
 
 function addGeoJsonLayer(map, layer) {
     if (layer.keyword === "sud/outpatient") {
@@ -290,6 +322,10 @@ function addBedsSlotsLayer(map, layer) {
     let textField = layer.keyword === 'sud/outpatient'
         ? ['concat', ['get', 'BEDS'], ' Beds\n', ['get', 'SLOTS'], ' Slots']
         : ['concat', ['get', 'BEDS'], '\nbeds'];
+
+    if (layer.keyword === 'sup/op slots') {
+        textField = ['concat', ['get', 'SLOTS'], '\nslots'];
+    }
 
     map.addLayer({
         'id': `${layer.layerTitle}-beds-layer`,

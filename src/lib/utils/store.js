@@ -96,6 +96,39 @@ export const datasetState = writable([
         data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/8a7cd9525aaa2a7b360e4b43c4f1c38dd12d379b/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20Psych%20Hospitals.geojson",
     },
     {
+        layerTitle: "BEDS",
+        keyword: "sud/op beds",
+        cluster: true,
+        clusterMaxZoom: 8,
+        clusterRadius: 50,
+        enabled: false,
+        color: "grey",
+        type: "geojson",
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+    },
+    {
+        layerTitle: "SLOTS",
+        keyword: "sup/op slots",
+        cluster: true,
+        clusterMaxZoom: 8,
+        clusterRadius: 50,
+        enabled: false,
+        color: "yellow",
+        type: "geojson",
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+    },
+    {
+        layerTitle: "SUD RTCs and Outpatient",
+        keyword: "sud/outpatient",
+        cluster: true,
+        clusterMaxZoom: 8,
+        clusterRadius: 50,
+        enabled: false,
+        color: "yellow",
+        type: "geojson",
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+    },
+    {
         layerTitle: "General Hospitals",
         keyword: "general hospitals",
         cluster: true,
@@ -260,17 +293,6 @@ export const datasetState = writable([
         color: "blue",
         type: "geojson",
         data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20UNIVERSAL%20CARE.geojson"
-    },
-    {
-        layerTitle: "SUD RTCs and Outpatient",
-        keyword: "sud/outpatient",
-        cluster: true,
-        clusterMaxZoom: 8,
-        clusterRadius: 50,
-        enabled: false,
-        color: "yellow",
-        type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
     },
     {
         layerTitle: "SUD RTCs and Outpatient Heatmap Test",

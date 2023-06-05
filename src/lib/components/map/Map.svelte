@@ -171,6 +171,12 @@
                     type: 'vector',
                     url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
                 });
+
+                map.addSource('txlunchdatafinal', {
+                    type: 'vector',
+                    url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
+                });
+                
                 handleLayer(map, $datasetState);
                 drawLayer($choroSettings.selectedLayer, map);
             });
