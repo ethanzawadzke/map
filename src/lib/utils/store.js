@@ -102,7 +102,7 @@ export const datasetState = writable([
         clusterMaxZoom: 8,
         clusterRadius: 50,
         enabled: false,
-        color: "grey",
+        color: "magenta",
         type: "geojson",
         data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
     },
