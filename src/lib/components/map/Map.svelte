@@ -48,6 +48,108 @@
                 url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
             });
 
+            function addContextMenuHandler(circleObject, map, popup) {
+            circleObject.circle.on('contextmenu', function(e) {
+                e.preventDefault();
+                console.log('Opening context menu...')
+                circleState.update(state => {
+                    state.contextMenuOpen = true;
+                    return state;
+                });
+                console.log('Context menu open:', $circleState.contextMenuOpen);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.style.cssText = `
+                    display: block;
+                    background-color: white;
+                    color: black;
+                    padding: 5px 10px;
+                    border: none;
+                    text-align: left;
+                    cursor: pointer;
+                    width: 100%;
+                    box-sizing: border-box;
+                `;
+                deleteButton.onmouseover = function() {
+                    this.style.backgroundColor = '#0078D7';
+                    this.style.color = 'white';
+                };
+                deleteButton.onmouseout = function() {
+                    this.style.backgroundColor = 'white';
+                    this.style.color = 'black';
+                };
+                deleteButton.onclick = function() {
+                    /* your delete button code */
+                    try {
+                        if(circleObject.circle) {
+                            circleObject.circle.remove();
+                        }
+
+                        circleState.update(state => {
+                            if (state.circles[circleObject.id]) {
+                                delete state.circles[circleObject.id];
+                            }
+                            return state;
+                        });
+
+                        console.log('Removing popup...')
+                        popup.remove();
+
+                    } catch (error) {
+                        console.error("An error occurred:", error);
+                    }
+                };
+
+                const toggleEditButton = document.createElement('button');
+                toggleEditButton.textContent = circleObject.circle.options.editable ? 'Disable Editing' : 'Enable Editing';
+                toggleEditButton.style.cssText = `
+                    display: block;
+                    background-color: white;
+                    color: black;
+                    padding: 5px 10px;
+                    border: none;
+                    text-align: left;
+                    cursor: pointer;
+                    width: 100%;
+                    box-sizing: border-box;
+                `;
+                toggleEditButton.onmouseover = function() {
+                    this.style.backgroundColor = '#0078D7';
+                    this.style.color = 'white';
+                };
+                toggleEditButton.onmouseout = function() {
+                    this.style.backgroundColor = 'white';
+                    this.style.color = 'black';
+                };
+                toggleEditButton.onclick = function() {
+                    // Create a new circle with the opposite editable state
+                    let newCircle = new MapboxCircle(circleObject.circle.getCenter(), circleObject.circle.getRadius(), {
+                        ...circleObject.circle.options,
+                        editable: !circleObject.circle.options.editable
+                    }).addTo(map);
+
+                    // Replace the old circle with the new one
+                    circleObject.circle.remove();
+                    circleObject.circle = newCircle;
+
+                    // Update the button text to reflect the current editable state
+                    toggleEditButton.textContent = circleObject.circle.options.editable ? 'Disable Editing' : 'Enable Editing';
+                    popup.remove();
+
+                    // Recreate the context menu for the new circle
+                    addContextMenuHandler(circleObject, map, popup);
+                };
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.appendChild(deleteButton);
+                buttonContainer.appendChild(toggleEditButton);
+
+                popup.setLngLat(e.lngLat)
+                    .setDOMContent(buttonContainer)
+                    .addTo(map);
+            });
+        }
 
 
             map.on('click', function (e) {
@@ -72,82 +174,17 @@
                         offset: [0, 0]  
                     });
 
-                    circleObject.circle.on('contextmenu', function(e) {
-                        e.preventDefault();
-                        console.log('Opening context menu...')
-                        circleState.update(state => {
-                            state.contextMenuOpen = true;
-                            return state;
-                        });
-                        console.log('Context menu open:', $circleState.contextMenuOpen);
-
-
-                        const deleteButton = document.createElement('button');
-                        deleteButton.textContent = 'Delete';
-                        deleteButton.style.cssText = `
-                            display: block;
-                            background-color: white;
-                            color: black;
-                            padding: 5px 10px;
-                            border: none;
-                            text-align: left;
-                            cursor: pointer;
-                            width: 100%;
-                            box-sizing: border-box;
-                        `;
-                        deleteButton.onmouseover = function() {
-                            this.style.backgroundColor = '#0078D7';
-                            this.style.color = 'white';
-                        };
-                        deleteButton.onmouseout = function() {
-                            this.style.backgroundColor = 'white';
-                            this.style.color = 'black';
-                        };
-                        deleteButton.onclick = function() {
-                            try {
-                                if(circleObject.circle) {
-                                    circleObject.circle.remove();
-                                }
-
-                                circleState.update(state => {
-                                    if (state.circles[circleObject.id]) {
-                                        delete state.circles[circleObject.id];
-                                    }
-                                    return state;
-                                });
-
-                                console.log('Removing popup...')
-                                popup.remove(); // Close the popup when we delete the circle
-                                console.log('Context menu status:', $circleState.contextMenuOpen);
-                            } catch (error) {
-                                console.error("An error occurred:", error);
-                            }
-                        };
-
-
-
-                        popup.setLngLat(e.lngLat)
-                            .setDOMContent(deleteButton)
-                            .addTo(map);
-                    });
-
-                    circle.once('radiuschanged', function (circleObj) {
-                        console.log('New radius (once!):', circleObj.getRadius());
-                    });
+                    addContextMenuHandler(circleObject, map, popup);
 
                     circleState.update(state => {
                         state.circles[circleObject.id] = circleObject;
                         return state;
                     });
-                } else {
-                    var features = map.queryRenderedFeatures(e.point);
-                    if (features.length > 0) {
-                        const popup = new mapboxgl.Popup();  
-                        createPopup(map, popup, e, features);  
-                    }
                 }
             });
         });
+
+        
 
         const unsubscribeChoro = choroSettings.subscribe(value => {
             console.log("ChoroSettings store changed, now executing function...");
@@ -176,7 +213,7 @@
                     type: 'vector',
                     url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
                 });
-                
+
                 handleLayer(map, $datasetState);
                 drawLayer($choroSettings.selectedLayer, map);
             });
