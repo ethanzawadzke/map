@@ -79,7 +79,7 @@ export const datasetState = writable([
         keyword: "realestate",
         enabled: false,
         cluster: false,
-        color: "#C70039",
+        color: "lightgreen",
         sourcelayer: "Texas_Data_Sets_for_MAP__-_Sh-alm75l",
         tilesetId: 'ethanzawadzke.89q6m5fi',
         type: "tileset",
@@ -97,7 +97,7 @@ export const datasetState = writable([
     },
     {
         layerTitle: "BEDS",
-        keyword: "sud/op beds",
+        keyword: "RT locations",
         cluster: true,
         clusterMaxZoom: 8,
         clusterRadius: 50,
@@ -108,7 +108,7 @@ export const datasetState = writable([
     },
     {
         layerTitle: "SLOTS",
-        keyword: "sup/op slots",
+        keyword: "OP locations",
         cluster: true,
         clusterMaxZoom: 8,
         clusterRadius: 50,
@@ -119,7 +119,7 @@ export const datasetState = writable([
     },
     {
         layerTitle: "SUD RTCs and Outpatient",
-        keyword: "sud/outpatient",
+        keyword: "Sud/OP locations",
         cluster: true,
         clusterMaxZoom: 8,
         clusterRadius: 50,

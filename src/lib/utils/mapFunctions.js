@@ -100,8 +100,6 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                     }
                     return [minPop, maxPop];
                 })
-
-
                 .then(range => {
                     let [minPop, maxPop] = range;
                     let colorStops = [];
@@ -180,7 +178,7 @@ function addTileset(map, layer) {
                     'layout': {
                         'icon-image': 'custom-marker',
                         // Optional: change scale of custom icon
-                        'icon-size': 1
+                        'icon-size': .5
                     }
                 });
             } else {
@@ -209,13 +207,13 @@ function addTileset(map, layer) {
 async function addGeoJson(map, layer) {
     let data;
 
-    // Only fetch and filter data if layer keyword is "sud/op beds" or "sup/op slots"
-    if (layer.keyword === 'sud/op beds' || layer.keyword === 'sup/op slots') {
+    // Only fetch and filter data if layer keyword is "RT locations" or "OP locations"
+    if (layer.keyword === 'RT locations' || layer.keyword === 'OP locations') {
         let response = await fetch(layer.data);
         let geojsonData = await response.json();
 
         // Determine which property to filter on based on the keyword
-        let propertyToFilter = layer.keyword === 'sud/op beds' ? 'BEDS' : 'SLOTS';
+        let propertyToFilter = layer.keyword === 'RT locations' ? 'BEDS' : 'SLOTS';
 
         // Filter data
         data = filterGeoJsonData(geojsonData, propertyToFilter);
@@ -256,7 +254,7 @@ function filterGeoJsonData(geojsonData, property) {
 
 
 function addGeoJsonLayer(map, layer) {
-    if (layer.keyword === "sud/outpatient") {
+    if (layer.keyword === "Sud/OP locations") {
         addSpecificLayer(map, layer, 'slots', 'yellow', 'SLOTS');
         addSpecificLayer(map, layer, 'beds', 'black', 'BEDS');
     } else {
@@ -376,11 +374,11 @@ function getClusterPaintConfig(layer) {
 }
 
 function addBedsSlotsLayer(map, layer) {
-    let textField = layer.keyword === 'sud/outpatient'
+    let textField = layer.keyword === 'Sud/OP locations'
         ? ['concat', ['get', 'BEDS'], ' Beds\n', ['get', 'SLOTS'], ' Slots']
         : ['concat', ['get', 'BEDS'], '\nbeds'];
 
-    if (layer.keyword === 'sup/op slots') {
+    if (layer.keyword === 'OP locations') {
         textField = ['concat', ['get', 'SLOTS'], '\nslots'];
     }
 
