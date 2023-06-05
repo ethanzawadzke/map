@@ -97,7 +97,7 @@ export const datasetState = writable([
     },
     {
         layerTitle: "BEDS",
-        keyword: "RT locations",
+        keyword: "RTC locations",
         cluster: true,
         clusterMaxZoom: 8,
         clusterRadius: 50,
