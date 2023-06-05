@@ -26,12 +26,21 @@ export function clearLayers(map) {
 
 export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
     return new Promise((resolve, reject) => {
-        //if map is texas districts, set datasetid to that id
+
         let test = null; 
+
+        console.log("STARTING LAYER TITLE: " + layerTitle)
 
         if (layerTitle !== "None") {
             if (layerTitle === "ENROLLED PCT") {
+                console.log('Layer set to ENROLLED PCT')
                 test = 'clihvcvkk12832dp41bdytixx'
+            } else if (layerTitle === 'Median Income Rank(0 - 99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
+                console.log('Layer set to Texas Zip Code Data')
+                console.log(layerTitle)
+                test ='clij9wtk24rqw2jpi63kwtsy9'
+            } else {
+                test = null;
             }
 
             let selectedLayer, colorSteps;
@@ -45,14 +54,25 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             let source;
 
             if (test !== null) {
-                source = 'txlunchdatafinal'
+                if (layerTitle === 'ENROLLED PCT') {
+                    source = 'txlunchdatafinal'
+                } else if (layerTitle === 'Median Income Rank(0 - 99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
+                    source = 'suckmyfuckingcockmapbox'
+                }
             } else {
                 source = 'counties-dataset'
             }
 
             if (test !== null) {
-                url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
-                console.log("using test url")
+                if (layerTitle  === 'ENROLLED PCT') {
+                    url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
+                } else if (layerTitle === 'Median Income Rank(0 - 99)' || 'Professional (%)' || 'Population' || 'Median Rooms In Home') {
+                    url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
+                }
+                else {
+                    url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=50&access_token=${accessToken}`;
+                }
+                
             } else {
                 url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=50&access_token=${accessToken}`;
             }
@@ -64,18 +84,24 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                     let minPop = Infinity;
                     let maxPop = -Infinity;
                     for (let feature of data.features) {
-                        let pop = feature.properties[selectedLayer];
-                        pop = typeof pop === 'string' ? parseFloat(pop) : pop;
+                        let pop;
+                        if (feature.properties.hasOwnProperty(selectedLayer) && feature.properties[selectedLayer] !== undefined) {
+                            pop = feature.properties[selectedLayer];
+                            pop = typeof pop === 'string' ? parseFloat(pop) : pop;
+                        } else {
+                            pop = 0; // Set the value to 0 if the property does not exist
+                        }
 
-
+                        console.log(pop)
                         minPop = Math.min(minPop, pop);
                         maxPop = Math.max(maxPop, pop);
-                        console.log(minPop, maxPop)
-                        //log types of both
-                        console.log(typeof minPop, typeof maxPop)
+                        /* console.log(minPop, maxPop)
+                        console.log(typeof minPop, typeof maxPop) */
                     }
                     return [minPop, maxPop];
                 })
+
+
                 .then(range => {
                     let [minPop, maxPop] = range;
                     let colorStops = [];

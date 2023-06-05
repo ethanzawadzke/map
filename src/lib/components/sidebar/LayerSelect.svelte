@@ -3,36 +3,47 @@
     import { accessToken, datasetId } from '$lib/utils/mapboxConfig.js';
     import { choroSettings } from '$lib/utils/store.js'
 
-    const url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=50&access_token=${accessToken}`;
+    const url1 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=50&access_token=${accessToken}`;
+
+    const url2 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/clij9wtk24rqw2jpi63kwtsy9/features?limit=50&access_token=${accessToken}`;
 
     let dropdownOpen = false;
 
     onMount(async () => {
         try {
-            const response = await fetch(url);
-            const data = await response.json();
-            const properties = data.features[0].properties;
-            const propertyNames = Object.keys(properties);
-            const numericProperties = propertyNames.filter((name) => {
-                return typeof properties[name] === 'number';
+            // Fetch data from first URL
+            const response1 = await fetch(url1);
+            const data1 = await response1.json();
+            const properties1 = data1.features[0].properties;
+            const propertyNames1 = Object.keys(properties1);
+            const numericProperties1 = propertyNames1.filter((name) => {
+                return typeof properties1[name] === 'number';
             });
+
+            // Fetch data from second URL
+            const response2 = await fetch(url2);
+            const data2 = await response2.json();
+            const properties2 = data2.features[4].properties;
+            const propertyNames2 = Object.keys(properties2);
+            const numericProperties2 = propertyNames2;
+
+            // Limit the numeric properties from the second URL to the last four
+            const lastFourNumericProperties2 = numericProperties2;
+
+            // Combine the numeric properties from the first URL with the last four from the second URL
+            const combinedNumericProperties = [...numericProperties1, ...lastFourNumericProperties2];
 
             choroSettings.update(state => {
                 return {
                     ...state,
-                    layerTitles: ["None", "ENROLLED PCT"],
+                    layerTitles: [].concat(combinedNumericProperties),
                 }
             });
 
-            choroSettings.update(state => {
-                return {
-                    ...state,
-                    layerTitles: [].concat(numericProperties),
-                }
-            });
         } catch (error) {
             console.error('Error: ' + error);
         }
+
     });
 </script>
 

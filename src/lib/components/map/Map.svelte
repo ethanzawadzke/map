@@ -43,6 +43,11 @@
                 url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
             });
 
+            map.addSource('suckmyfuckingcockmapbox', {
+                type: 'vector',
+                url: 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw'
+            });
+
             map.addSource('txlunchdatafinal', {
                 type: 'vector',
                 url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
@@ -213,6 +218,11 @@
                 map.addSource('counties-dataset', {
                     type: 'vector',
                     url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
+                });
+
+                map.addSource('suckmyfuckingcockmapbox', {
+                    type: 'vector',
+                    url: 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw'
                 });
 
                 map.addSource('txlunchdatafinal', {
