@@ -190,12 +190,6 @@
                         state.circles[circleObject.id] = circleObject;
                         return state;
                     });
-                } else {
-                    var features = map.queryRenderedFeatures(e.point);
-                    if (features.length > 0) {
-                        const popup = new mapboxgl.Popup();  
-                        createPopup(map, popup, e, features);  
-                    }
                 }
             });
         });

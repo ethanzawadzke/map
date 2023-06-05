@@ -262,9 +262,9 @@ function addSpecificLayer(map, layer, suffix, color, feature) {
 }
 
 function addGenericLayer(map, layer) {
-    map.addLayer({
+    // Base layer properties
+    let layerProperties = {
         'id': layer.layerTitle,
-        'type': 'circle',
         'source': layer.layerTitle,
         'paint': {
             'circle-radius': [
@@ -279,8 +279,22 @@ function addGenericLayer(map, layer) {
             'circle-stroke-width': 1,
             'circle-stroke-color': 'white'
         }
-    });
+    };
+
+    // If the layer name is "x", use a custom map icon
+    if (layerProperties.keyword === 'realestate') {
+        layerProperties.type = 'symbol';
+        layerProperties.layout = {
+            'icon-image': 'cat', // the id used when you called map.addImage
+            'icon-size': 0.5 // adjust as needed
+        };
+    } else {
+        layerProperties.type = 'circle';
+    }
+
+    map.addLayer(layerProperties);
 }
+
 
 function addGeoJsonCluster(map, layer) {
     if (layer.cluster) {
