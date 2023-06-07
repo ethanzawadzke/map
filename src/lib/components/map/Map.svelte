@@ -457,54 +457,51 @@
         overflow: hidden;
     }
 
-    :global(
-        .ql-container.ql-snow {
-            border: 0;
-        }
+    :global(.ql-container.ql-snow) {
+        border: 0;
+    }
 
-        .mapboxgl-popup-content {
-            padding: 0;
-        }
+    :global(.mapboxgl-popup-content) {
+        padding: 0;
+    }
 
-        .ql-snow.ql-picker[data-value=arial] span.ql-picker-label {
+    :global(.ql-snow .ql-picker[data-value=arial] span.ql-picker-label) {
         font-family: 'Arial';
-        }
+    }
 
-        .ql-snow .ql-picker[data-value=comic-sans] span.ql-picker-label {
+    :global(.ql-snow .ql-picker[data-value=comic-sans] span.ql-picker-label) {
         font-family: 'Comic Sans MS';
-        }
+    }
 
-        .ql-snow .ql-picker[data-value=times-new-roman] span.ql-picker-label {
+    :global(.ql-snow .ql-picker[data-value=times-new-roman] span.ql-picker-label) {
         font-family: 'Times New Roman';
-        }
+    }
 
-        .ql-snow .ql-picker[data-value=calibri] span.ql-picker-label {
+    :global(.ql-snow .ql-picker[data-value=calibri] span.ql-picker-label) {
         font-family: 'Calibri';
-        }
+    }
 
-        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
-    content: 'Normal';
-    font-size: 14px !important;
-}
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before) {
+        content: 'Normal';
+        font-size: 14px !important;
+    }
 
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
-    content: 'Large';
-    font-size: 16px !important;
-}
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before) {
+        content: 'Large';
+        font-size: 16px !important;
+    }
 
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
-    content: 'Huge';
-    font-size: 18px !important;
-}
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before) {
+        content: 'Huge';
+        font-size: 18px !important;
+    }
 
-/* set mapbox popup tip displays to none */
-.mapboxgl-popup-tip {
-    display: none;
-}
+    /* set mapbox popup tip displays to none */
+    :global(.mapboxgl-popup-tip) {
+        display: none;
+    }
 
-.ql-toolbar {
-    background-color: white;
-}
-
-    )
+    :global(.ql-toolbar) {
+        background-color: white;
+    }
 </style>
