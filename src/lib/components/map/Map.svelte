@@ -340,14 +340,27 @@ const toggleVisibility = function(event) {
     const popupContentElement = event.currentTarget;
     const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
     const closeButtonElement = popupContentElement.querySelector('.mapboxgl-popup-close-button');
+    const editorElement = popupContentElement.querySelector('.ql-editor');
 
     if (toolbarElement) {
         isVisible = !isVisible;
         toolbarElement.style.display = closeButtonElement.style.display = isVisible ? '' : 'none';
+        
+        // Toggle the no-caret class on the editor element
+        if (isVisible) {
+            if (editorElement) {
+                editorElement.classList.remove('no-caret');
+            }
+        } else {
+            if (editorElement) {
+                editorElement.classList.add('no-caret');
+            }
+        }
     }
 
     console.log($labelState)
 };
+
 
 
     // Function to prevent event bubbling on button click
@@ -537,6 +550,10 @@ const toggleVisibility = function(event) {
 
     :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36px"]::before) {
     content: '36px';
+    }
+
+    :global(.no-caret::before, .no-caret::after, .no-caret) {
+    caret-color: transparent !important;
     }
 
 
