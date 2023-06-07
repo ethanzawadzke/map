@@ -203,6 +203,9 @@
     // Initialize the total beds count
     let totalBedsCount = 0;
 
+    // Initialize the total slots count
+    let totalSlotsCount = 0;
+
     // For each active layer...
     for (let dataset of activeLayers) {
         // Query all rendered features in the current layer without specifying bounds
@@ -220,17 +223,26 @@
             if (distance < radius) {
                 // Increase the total feature count
                 totalFeatureCount++;
+
+                // Check if the feature has a 'BEDS' property
+                if (feature.properties.BEDS) {
+                    // Ensure that 'BEDS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
+                    totalBedsCount += parseInt(feature.properties.BEDS, 10);
+                }
                 
-                // Add the value of the 'BEDS' property to the total beds count
-                // Ensure that 'BEDS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
-                totalBedsCount += feature.properties.BEDS;
+                // Check if the feature has a 'SLOTS' property
+                if (feature.properties.SLOTS) {
+                    // Ensure that 'SLOTS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
+                    totalSlotsCount += parseInt(feature.properties.SLOTS, 10);
+                }
             }
         }
     }
 
     popup.remove();
-    window.alert("Total feature count: " + totalFeatureCount/2 + "\nTotal beds count: " + totalBedsCount/2);
+    window.alert("Total feature count: " + totalFeatureCount/2 + "\nTotal beds count: " + totalBedsCount/2 + "\nTotal slots count: " + totalSlotsCount/2);
 };
+
 
 
                     buttonContainer.appendChild(countButton);
