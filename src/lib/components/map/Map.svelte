@@ -304,7 +304,7 @@
 
     // Register custom formats
     var Size = Quill.import('attributors/style/size');
-    Size.whitelist = ['14px', '16px', '18px'];
+    Size.whitelist = ['14px', '16px', '18px', '24px', '36px'];
     Quill.register(Size, true);
 
     // Add fonts to whitelist
@@ -315,7 +315,7 @@
     const toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],
         [{ 'font': fontNames }], // font selector
-        [{ 'size': ['14px', '16px', '18px'] }],  // size options
+        [{ 'size': ['14px', '16px', '18px', '24px', '36px'] }],  // size options
         [{ 'color': [] }, { 'background': [] }],  // dropdown with defaults from theme
     ];
 
@@ -482,18 +482,28 @@
     }
 
     :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before) {
-        content: 'Normal';
-        font-size: 14px !important;
+        content: '14px';
+
     }
 
     :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before) {
-        content: 'Large';
-        font-size: 16px !important;
+        content: '16px';
+
     }
 
     :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before) {
-        content: 'Huge';
-        font-size: 18px !important;
+        content: '18px';
+
+    }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before) {
+        content: '24px';
+
+    }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="36px"]::before) {
+        content: '36px';
+
     }
 
     /* set mapbox popup tip displays to none */
@@ -504,4 +514,28 @@
     :global(.ql-toolbar) {
         background-color: white;
     }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before) {
+    content: '14px';
+    }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before) {
+        content: '16px';
+
+    }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18px"]::before) {
+        content: '18px';
+
+    }
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24px"]::before) {
+    content: '24px';
+    }
+
+    :global(.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36px"]::before) {
+    content: '36px';
+    }
+
+
+
 </style>
