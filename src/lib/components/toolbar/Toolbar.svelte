@@ -1,9 +1,9 @@
 <script>
   import Button from './Button.svelte';
-  import { toolState, circleState } from '$lib/utils/store.js';
+  import { toolState, circleState, labelState } from '$lib/utils/store.js';
 
-  function selectCircleTool () {
-    if ($toolState.tool === "Circle") {
+  function selectTool (toolName) {
+    if ($toolState.tool === toolName) {
       toolState.update(value => ({ 
         ...value, 
         tool: null
@@ -11,16 +11,19 @@
     } else {
       toolState.update(value => ({ 
         ...value, 
-        tool: "Circle" 
+        tool: toolName
       }));    
     }
+    console.log($toolState);
   }
 </script>
 
 <div class="toolbar">
-    <Button buttonName="Circle Tool" active={$toolState.tool === "Circle"} on:click={selectCircleTool}/>
+    <Button buttonName='Label Tool' active={$toolState.tool === 'Label'} on:click={() => selectTool('Label')}/>
+    <Button buttonName='Circle Tool' active={$toolState.tool === 'Circle'} on:click={() => selectTool('Circle')}/>
 
-    {#if $toolState.tool === "Circle"}
+
+    {#if $toolState.tool === 'Circle'}
     <div class="options-dropdown">
         <div class="radius-input-container">
             <label for="radius-input">Radius</label>
@@ -38,6 +41,19 @@
                 id="color-picker" 
                 type="color" 
                 bind:value={$circleState.color} 
+            />
+        </div>
+    </div>
+    {/if}
+    {#if $toolState.tool === 'Label'}
+    <div class="options-dropdown">
+        <div class="radius-input-container">
+            <label for="label-color-picker">Label Color</label>
+            <input
+                id="label-color-picker" 
+                type="color" 
+                bind:value={$labelState.activeColor} 
+                placeholder="Label" 
             />
         </div>
     </div>

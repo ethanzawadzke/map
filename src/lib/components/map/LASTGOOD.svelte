@@ -265,14 +265,12 @@
         closeButton: true,
         anchor: 'bottom',
         offset: [0, -20],
-        maxWidth: 'none', 
+        maxWidth: 'none'
     })
     .addClassName('popuptest')
     .setLngLat(e.lngLat)
     .setHTML(`<div id="${uniqueID}"></div>`)
     .addTo(map);
-
-    console.log($labelState)
 
     // specify the fonts you would 
     var fonts = ['Arial', 'Courier', 'Garamond', 'Tahoma', 'Times New Roman', 'Verdana'];
@@ -321,66 +319,7 @@
         theme: 'snow'
     });
 
-    const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
-    if (editorElement) {
-        editorElement.style.backgroundColor = $labelState.activeColor;
-    }
-
-     let isVisible = true;
-
-    // Function to toggle the editor visibility
-    const toggleVisibility = function(event) {
-        event.preventDefault();
-        const popupContentElement = event.currentTarget;
-        const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
-
-        if (toolbarElement) {
-            isVisible = !isVisible;
-            toolbarElement.style.display = isVisible ? '' : 'none';
-        }
-
-        console.log($labelState)
-    };
-
-    // Function to prevent event bubbling on button click
-    const buttonClickHandler = function(event) {
-        event.stopPropagation();
-        toggleVisibility(event);
-    }
-
-
-
-    // Add event listener to the popup
-    document.getElementById(uniqueID).parentNode.addEventListener('contextmenu', toggleVisibility);
-
-    // Update label state with the new editor
-    labelState.update(state => {
-        state.editors.set(uniqueID, editor);
-        return state;
-    });
-
     // ... Your remaining code ...
-
-    popup.on('close', () => {
-        // Remove event listeners when the popup is closed
-        document.getElementById(buttonID).removeEventListener('click', buttonClickHandler);
-        document.getElementById(uniqueID).parentNode.removeEventListener('click', toggleVisibility);
-
-        // Update label state by removing the editor from the editors map
-        // and if it was the active editor, set activeEditor to null
-        labelState.update(state => {
-            state.editors.delete(uniqueID);
-            if (state.activeEditor === editor) {
-                state.activeEditor = null;
-            }
-            return state;
-        });
-    });
-
-    toolState.update(state => {
-        state.tool = null;
-        return state;
-    });
 }
 
 
@@ -490,11 +429,6 @@
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
     content: 'Huge';
     font-size: 18px !important;
-}
-
-/* set mapbox popup tip displays to none */
-.mapboxgl-popup-tip {
-    display: none;
 }
 
     )

@@ -4,6 +4,13 @@ export const mapState = writable({
     map: null,
 });
 
+export const labelState = writable({
+    activeColor: 'white',
+    activeEditor: null,
+    editors: new Map(),
+    labels: {},
+});
+        
 export const styleState = writable({
     style: null,
     styles: [
@@ -21,6 +28,8 @@ export const styleState = writable({
 export const toolState = writable({
     tool: null
 });
+
+
 
 export const circleState = writable({
     radius: null,

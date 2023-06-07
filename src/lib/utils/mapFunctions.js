@@ -56,7 +56,7 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             if (test !== null) {
                 if (layerTitle === 'ENROLLED PCT') {
                     source = 'txlunchdatafinal'
-                } else if (layerTitle === 'Median Income Rank(0 - 99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
+                } else if (layerTitle === 'Median Income Rank (0-99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
                     source = 'suckmyfuckingcockmapbox'
                 }
             } else {
@@ -66,7 +66,7 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             if (test !== null) {
                 if (layerTitle  === 'ENROLLED PCT') {
                     url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
-                } else if (layerTitle === 'Median Income Rank(0 - 99)' || 'Professional (%)' || 'Population' || 'Median Rooms In Home') {
+                } else if (layerTitle === 'Median Income Rank (0-99)' || 'Professional (%)' || 'Population' || 'Median Rooms In Home') {
                     url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
                 }
                 else {

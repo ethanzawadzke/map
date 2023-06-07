@@ -2,23 +2,17 @@
     import { onMount } from "svelte";
     import mapboxgl from "mapbox-gl";
     import "mapbox-gl/dist/mapbox-gl.css";
-    import { mapState, choroSettings, datasetState, toolState, circleState, styleState, labelState } from "$lib/utils/store.js";
+    import { mapState, choroSettings, datasetState, toolState, circleState, styleState } from "$lib/utils/store.js";
     import { accessToken, datasetId } from "$lib/utils/mapboxConfig.js";
     import { drawLayer, clearLayers, handleLayer, createPopup, convertMilesToMeters } from "$lib/utils/mapFunctions.js";
-    import 'quill/dist/quill.snow.css';
-
 
     let mapContainer;
     let map;
     let MapboxCircle;
-    let Quill;
-    
+
     onMount(async () => {
         const module = await import('mapbox-gl-circle');
         MapboxCircle = module.default;
-
-        const quillModule = await import('quill');
-        Quill = quillModule.default;
 
         initializeMap();
         setupEventHandlers();
@@ -36,17 +30,11 @@
         });
 
         mapState.set({ map: map });
-
-        styleState.update(state => {
-            return {
-                ...state,
-                style: 'streets-v12'
-            }
-        });
+        styleState.set({ style: 'streets-v12' });
 
         const mapSources = {
             'counties-dataset': 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg',
-            'txzipdata': 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw',
+            'suckmyfuckingcockmapbox': 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw',
             'txlunchdatafinal': 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
         };
 
@@ -62,6 +50,27 @@
 
     function setupEventHandlers() {
         map.on('load', function() {
+            map.addSource('counties-dataset', {
+                type: 'vector',
+                url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
+            });
+
+            map.addSource('suckmyfuckingcockmapbox', {
+                type: 'vector',
+                url: 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw'
+            });
+
+            map.addSource('txlunchdatafinal', {
+                type: 'vector',
+                url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
+            });
+
+            function isPointInCircle(point, circleCenter, radius) {
+                const dx = circleCenter.lng - point.lng;
+                const dy = circleCenter.lat - point.lat;
+                return dx * dx + dy * dy <= radius * radius;
+            }
+
 
             function addContextMenuHandler(circleObject, map, popup) {
                 circleObject.circle.on('contextmenu', function(e) {
@@ -227,8 +236,9 @@
                 });
             }
 
+
             map.on('click', function (e) {
-                if ($toolState.tool === "Circle"){
+                if ($toolState.tool){
                     console.log("tool click")
 
                     const circle = new MapboxCircle(e.lngLat, convertMilesToMeters($circleState.radius), {
@@ -249,158 +259,25 @@
                         offset: [0, 0]  
                     });
 
+                    addContextMenuHandler(circleObject, map, popup);
+
                     circleState.update(state => {
                         state.circles[circleObject.id] = circleObject;
                         return state;
                     });
-
-                    addContextMenuHandler(circleObject, map, popup);
-                } else if ($toolState.tool === "Label") {
-    // Label creation logic
-    const uniqueID = "editor-" + Date.now();
-    const buttonID = "toggle-button-" + uniqueID;
-
-    const popup = new mapboxgl.Popup({
-        closeOnClick: false, 
-        closeButton: true,
-        anchor: 'bottom',
-        offset: [0, -20],
-        maxWidth: 'none', 
-    })
-    .addClassName('popuptest')
-    .setLngLat(e.lngLat)
-    .setHTML(`<div id="${uniqueID}"></div>`)
-    .addTo(map);
-
-    console.log($labelState)
-
-    // specify the fonts you would 
-    var fonts = ['Arial', 'Courier', 'Garamond', 'Tahoma', 'Times New Roman', 'Verdana'];
-    // generate code friendly names
-    function getFontName(font) {
-        return font.toLowerCase().replace(/\s/g, "-");
-    }
-    var fontNames = fonts.map(font => getFontName(font));
-    // add fonts to style
-    var fontStyles = "";
-    fonts.forEach(function(font) {
-        var fontName = getFontName(font);
-        fontStyles += ".ql-snow .ql-picker.ql-font .ql-picker-label[data-value=" + fontName + "]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=" + fontName + "]::before {" +
-            "content: '" + font + "';" +
-            "font-family: '" + font + "', sans-serif;" +
-            "}" +
-            ".ql-font-" + fontName + "{" +
-            " font-family: '" + font + "', sans-serif;" +
-            "}";
-    });
-    var node = document.createElement('style');
-    node.innerHTML = fontStyles;
-    document.body.appendChild(node);
-
-    // Register custom formats
-    var Size = Quill.import('attributors/style/size');
-    Size.whitelist = ['14px', '16px', '18px'];
-    Quill.register(Size, true);
-
-    // Add fonts to whitelist
-    var Font = Quill.import('formats/font');
-    Font.whitelist = fontNames;
-    Quill.register(Font, true);
-
-    const toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'font': fontNames }], // font selector
-        [{ 'size': ['14px', '16px', '18px'] }],  // size options
-        [{ 'color': [] }, { 'background': [] }],  // dropdown with defaults from theme
-    ];
-
-    const editor = new Quill('#' + uniqueID, {
-        modules: {
-            toolbar: toolbarOptions
-        },
-        theme: 'snow'
-    });
-
-    const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
-    if (editorElement) {
-        editorElement.style.backgroundColor = $labelState.activeColor;
-    }
-
-     let isVisible = true;
-
-    // Function to toggle the editor visibility
-    const toggleVisibility = function(event) {
-        event.preventDefault();
-        const popupContentElement = event.currentTarget;
-        const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
-
-        if (toolbarElement) {
-            isVisible = !isVisible;
-            toolbarElement.style.display = isVisible ? '' : 'none';
-        }
-
-        console.log($labelState)
-    };
-
-    // Function to prevent event bubbling on button click
-    const buttonClickHandler = function(event) {
-        event.stopPropagation();
-        toggleVisibility(event);
-    }
-
-
-
-    // Add event listener to the popup
-    document.getElementById(uniqueID).parentNode.addEventListener('contextmenu', toggleVisibility);
-
-    // Update label state with the new editor
-    labelState.update(state => {
-        state.editors.set(uniqueID, editor);
-        return state;
-    });
-
-    // ... Your remaining code ...
-
-    popup.on('close', () => {
-        // Remove event listeners when the popup is closed
-        document.getElementById(buttonID).removeEventListener('click', buttonClickHandler);
-        document.getElementById(uniqueID).parentNode.removeEventListener('click', toggleVisibility);
-
-        // Update label state by removing the editor from the editors map
-        // and if it was the active editor, set activeEditor to null
-        labelState.update(state => {
-            state.editors.delete(uniqueID);
-            if (state.activeEditor === editor) {
-                state.activeEditor = null;
-            }
-            return state;
-        });
-    });
-
-    toolState.update(state => {
-        state.tool = null;
-        return state;
-    });
-}
-
-
-
-
-
- else {
+                } else {
                     var features = map.queryRenderedFeatures(e.point);
                     if (features.length > 0) {
                         const popup = new mapboxgl.Popup();  
                         createPopup(map, popup, e, features);  
                     }
-                    console.log($toolState.tool)
                 }
             });
-        }
-    )};
+        });
+    }
 
     function setupStoreSubscriptions() {
-         const unsubscribeChoro = choroSettings.subscribe(value => {
+        const unsubscribeChoro = choroSettings.subscribe(value => {
         console.log("ChoroSettings store changed, now executing function...");
         clearLayers(map);
         drawLayer($choroSettings.selectedLayer, map);
@@ -437,7 +314,20 @@
             drawLayer($choroSettings.selectedLayer, map);
         });
     });
+
+
+    return () => {
+        unsubscribeChoro();
+        unsubscribeDataset();
+        unsubscribeStyle();
+        if (map) {
+            map.remove();
+        }
+    };
     }
+
+    // ...
+    // continue breaking down the large code blocks into smaller functions
 </script>
 
 
@@ -451,51 +341,4 @@
         height: 100%;
         overflow: hidden;
     }
-
-    :global(
-        .ql-container.ql-snow {
-            border: 0;
-        }
-
-        .mapboxgl-popup-content {
-            padding: 0;
-        }
-
-        .ql-snow.ql-picker[data-value=arial] span.ql-picker-label {
-        font-family: 'Arial';
-        }
-
-        .ql-snow .ql-picker[data-value=comic-sans] span.ql-picker-label {
-        font-family: 'Comic Sans MS';
-        }
-
-        .ql-snow .ql-picker[data-value=times-new-roman] span.ql-picker-label {
-        font-family: 'Times New Roman';
-        }
-
-        .ql-snow .ql-picker[data-value=calibri] span.ql-picker-label {
-        font-family: 'Calibri';
-        }
-
-        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
-    content: 'Normal';
-    font-size: 14px !important;
-}
-
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
-    content: 'Large';
-    font-size: 16px !important;
-}
-
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
-    content: 'Huge';
-    font-size: 18px !important;
-}
-
-/* set mapbox popup tip displays to none */
-.mapboxgl-popup-tip {
-    display: none;
-}
-
-    )
 </style>

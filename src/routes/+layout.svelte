@@ -2,7 +2,6 @@
 
 <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/app.css">
 </head>
 
 <script>
