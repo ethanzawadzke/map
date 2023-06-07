@@ -33,20 +33,29 @@
     </button>
 
     {#if dropdownOpen}
-        <div class="checkbox-list">
-            {#each $datasetState as dataset, index}
+    <div class="checkbox-list">
+        {#each $datasetState as dataset, index}
             <div class="checkbox-item">
                 {#if dataset.enabled}
-                    <i class="fas fa-eye" on:click={() => dataset.enabled = !dataset.enabled}></i>
+                    <i class="fas fa-eye" 
+                       on:click={() => dataset.enabled = !dataset.enabled} 
+                       on:keydown={(event) => event.key === 'Enter' ? dataset.enabled = !dataset.enabled : null}
+                       tabindex="-1">
+                    </i>
                 {:else}
-                    <i class="fas fa-eye-slash" on:click={() => dataset.enabled = !dataset.enabled}></i>
+                    <i class="fas fa-eye-slash" 
+                       on:click={() => dataset.enabled = !dataset.enabled} 
+                       on:keydown={(event) => event.key === 'Enter' ? dataset.enabled = !dataset.enabled : null}
+                       tabindex="-1">
+                    </i>
                 {/if}
                 <div class="color-square" style="background-color: {dataset.color};"></div>
-                <label>{dataset.layerTitle}</label>
+                <div class="test">{dataset.layerTitle}</div>
             </div>
         {/each}
-        </div>
-    {/if}
+    </div>
+{/if}
+
 </section>
 
 

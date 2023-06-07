@@ -20,8 +20,4 @@
         height: 100%;
         width: 100%;
     }
-
-    .mapboxgl-popup-content {
-        border-radius: .5rem;
-    }
 </style>
