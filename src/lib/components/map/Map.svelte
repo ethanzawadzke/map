@@ -334,18 +334,21 @@
      let isVisible = true;
 
     // Function to toggle the editor visibility
-    const toggleVisibility = function(event) {
-        event.preventDefault();
-        const popupContentElement = event.currentTarget;
-        const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
+    // Function to toggle the editor visibility
+const toggleVisibility = function(event) {
+    event.preventDefault();
+    const popupContentElement = event.currentTarget;
+    const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
+    const closeButtonElement = popupContentElement.querySelector('.mapboxgl-popup-close-button');
 
-        if (toolbarElement) {
-            isVisible = !isVisible;
-            toolbarElement.style.display = isVisible ? '' : 'none';
-        }
+    if (toolbarElement) {
+        isVisible = !isVisible;
+        toolbarElement.style.display = closeButtonElement.style.display = isVisible ? '' : 'none';
+    }
 
-        console.log($labelState)
-    };
+    console.log($labelState)
+};
+
 
     // Function to prevent event bubbling on button click
     const buttonClickHandler = function(event) {
