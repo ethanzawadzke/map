@@ -4,6 +4,7 @@
     import DatasetSelector from '$lib/components/sidebar/DatasetSelector.svelte';
     import MapStyleSelector from '$lib/components/sidebar/MapStyleSelector.svelte';
     import MapLayers from '$lib/components/sidebar/MapLayers.svelte';
+    import CustomLabels from '$lib/components/sidebar/CustomLabels.svelte';
 </script>
 
 <div class="sidebar">
@@ -11,6 +12,7 @@
     <DatasetSelector />
     <MapStyleSelector />
     <MapLayers />
+    <CustomLabels />
 </div>
 
 <div id="legend" class="legend"></div>

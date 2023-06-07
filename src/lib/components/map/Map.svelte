@@ -35,7 +35,12 @@
             zoom: 3,
         });
 
-        mapState.set({ map: map });
+        mapState.update(state => {
+            return {
+                ...state,
+                map: map
+            }
+        });
 
         styleState.update(state => {
             return {
@@ -322,7 +327,8 @@
     ];
 
 
-    const editor = new Quill('#' + uniqueID, {
+    // Initialize Quill editor first
+const editor = new Quill('#' + uniqueID, {
     modules: {
         toolbar: {
             container: toolbarOptions,
@@ -337,16 +343,26 @@
                     document.getElementById(uniqueID).dispatchEvent(event);
                 },
                 delete: function() {
-          // Show confirmation dialog
-          if (confirm("Are you sure you want to delete this label?")) {
-            // User confirmed deletion, proceed with removal
-            popup.remove();
-          }
-        },
+                    // Show confirmation dialog
+                    if (confirm("Are you sure you want to delete this label?")) {
+                        // User confirmed deletion, proceed with removal
+                        popup.remove();
+                    }
+                },
             },
         },
     },
     theme: 'snow',
+});
+
+// Then add it to labelState
+labelState.update(state => {
+    state.editors.set(uniqueID, editor);
+    state.labels[uniqueID] = {
+        popup: popup,
+        isVisible: true
+    };
+    return state;
 });
 
 
@@ -382,6 +398,13 @@ const toggleVisibility = function(event) {
         }
     }
 
+    labelState.update(state => {
+            /* state.labels[uniqueID].isVisible = !isVisible; */
+            //check if the label is visible, if it is, set it to false, if it isn't, set it to true
+            state.labels[uniqueID].isVisible = state.labels[uniqueID].isVisible ? true : false;
+            return state;
+        });
+
     console.log($labelState)
 };
 
@@ -408,16 +431,19 @@ const toggleVisibility = function(event) {
 
     popup.on('close', () => {
         // Remove event listeners when the popup is closed
-        document.getElementById(buttonID).removeEventListener('click', buttonClickHandler);
+        /* document.getElementById(buttonID).removeEventListener('click', buttonClickHandler); */
         document.getElementById(uniqueID).parentNode.removeEventListener('click', toggleVisibility);
 
         // Update label state by removing the editor from the editors map
         // and if it was the active editor, set activeEditor to null
         labelState.update(state => {
             state.editors.delete(uniqueID);
+            delete state.labels[uniqueID];
+
             if (state.activeEditor === editor) {
                 state.activeEditor = null;
             }
+
             return state;
         });
     });
@@ -583,9 +609,8 @@ const toggleVisibility = function(event) {
     :global(.ql-toolbar .ql-check::before) {
     font-size: 14px;
     content: 'Done';
-    background-color: green;
     padding: .4rem;
-    color: white;
+    color: BLACK;
     width: fit-content;
     }
 
