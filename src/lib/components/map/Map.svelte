@@ -187,42 +187,51 @@
                         this.style.color = 'black';
                     };
                     countButton.onclick = function() {
-                        // Get the circle's center and radius
-                        let center = circleObject.circle.getCenter();
-                        let radius = circleObject.circle.getRadius();  // Assuming this is in meters
+    // Get the circle's center and radius
+    let center = circleObject.circle.getCenter();
+    let radius = circleObject.circle.getRadius();  // Assuming this is in meters
 
-                        // Convert the circle center to a LngLat object
-                        let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
+    // Convert the circle center to a LngLat object
+    let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
 
-                        // Get all active layers
-                        let activeLayers = $datasetState.filter(dataset => dataset.enabled);
+    // Get all active layers
+    let activeLayers = $datasetState.filter(dataset => dataset.enabled);
 
-                        // Initialize the total feature count
-                        let totalFeatureCount = 0;
+    // Initialize the total feature count
+    let totalFeatureCount = 0;
 
-                        // For each active layer...
-                        for (let dataset of activeLayers) {
-                            // Query all rendered features in the current layer without specifying bounds
-                            let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
+    // Initialize the total beds count
+    let totalBedsCount = 0;
 
-                            // For each feature in the current layer...
-                            for (let feature of features) {
-                                // Convert the feature coordinates to a LngLat object
-                                let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
+    // For each active layer...
+    for (let dataset of activeLayers) {
+        // Query all rendered features in the current layer without specifying bounds
+        let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
 
-                                // Calculate the distance from the circle center to the feature in meters
-                                let distance = lngLatCenter.distanceTo(lngLatFeature);
+        // For each feature in the current layer...
+        for (let feature of features) {
+            // Convert the feature coordinates to a LngLat object
+            let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
 
-                                // If the distance is less than the circle radius, the feature lies within the circle
-                                if (distance < radius) {
-                                    // Increase the total feature count
-                                    totalFeatureCount++;
-                                }
-                            }
-                        }
-                        popup.remove();
-                        window.alert("Total feature count: " + totalFeatureCount/2);
-                    };
+            // Calculate the distance from the circle center to the feature in meters
+            let distance = lngLatCenter.distanceTo(lngLatFeature);
+
+            // If the distance is less than the circle radius, the feature lies within the circle
+            if (distance < radius) {
+                // Increase the total feature count
+                totalFeatureCount++;
+                
+                // Add the value of the 'BEDS' property to the total beds count
+                // Ensure that 'BEDS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
+                totalBedsCount += feature.properties.BEDS;
+            }
+        }
+    }
+
+    popup.remove();
+    window.alert("Total feature count: " + totalFeatureCount/2 + "\nTotal beds count: " + totalBedsCount/2);
+};
+
 
                     buttonContainer.appendChild(countButton);
 
