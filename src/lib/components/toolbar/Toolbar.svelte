@@ -47,16 +47,25 @@
     {/if}
     {#if $toolState.tool === 'Label'}
     <div class="options-dropdown">
-        <div class="radius-input-container">
-            <label for="label-color-picker">Label Color</label>
-            <input
-                id="label-color-picker" 
-                type="color" 
-                bind:value={$labelState.activeColor} 
-                placeholder="Label" 
-            />
-        </div>
+    <div class="radius-input-container">
+        <label for="label-color-picker">Label Color</label>
+        <input
+            id="label-color-picker" 
+            type="color" 
+            bind:value={$labelState.activeColor} 
+            placeholder="Label" 
+        />
     </div>
+    <div class="checkbox-input-container">
+        <label for="label-transparency-checkbox">Transparent</label>
+        <input 
+            id="label-transparency-checkbox" 
+            type="checkbox" 
+            bind:checked={$labelState.isTransparent}
+        />
+    </div>
+</div>
+
     {/if}
 </div>
 

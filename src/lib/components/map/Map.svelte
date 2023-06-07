@@ -272,6 +272,11 @@
     .setHTML(`<div id="${uniqueID}"></div>`)
     .addTo(map);
 
+    const popupContentElement = popup.getElement().querySelector('.mapboxgl-popup-content');
+    if (popupContentElement) {
+        popupContentElement.style.backgroundColor = $labelState.isTransparent ? 'transparent' : $labelState.activeColor;
+    }
+
     console.log($labelState)
 
     // specify the fonts you would 
@@ -323,7 +328,7 @@
 
     const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
     if (editorElement) {
-        editorElement.style.backgroundColor = $labelState.activeColor;
+        $labelState.isTransparent ? editorElement.style.backgroundColor = 'transparent' : $labelState.activeColor;
     }
 
      let isVisible = true;
@@ -495,6 +500,10 @@
 /* set mapbox popup tip displays to none */
 .mapboxgl-popup-tip {
     display: none;
+}
+
+.ql-toolbar {
+    background-color: white;
 }
 
     )
