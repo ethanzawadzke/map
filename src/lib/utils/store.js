@@ -55,6 +55,7 @@ export const datasetState = writable([
         sourcelayer: 'DTX_list_-_DTX_FINAL-19nx7m',
         tilesetId: 'ethanzawadzke.ao961pfm',
         type: 'tileset',
+        heatmapEnabled: false,
     },
     {
         layerTitle: 'OBOT',
@@ -64,6 +65,7 @@ export const datasetState = writable([
         sourcelayer: 'Business_Unit_personal_-_Shee-6l8chx',
         tilesetId: 'ethanzawadzke.de1ir845',
         type: 'tileset',
+        heatmapEnabled: false,
     }, 
     {
         layerTitle: 'OTP Competitors',
@@ -73,6 +75,7 @@ export const datasetState = writable([
         sourcelayer: 'OBOT_Competiors_-8g2bza',
         tilesetId: 'ethanzawadzke.a9bcsbgf',
         type: 'tileset',
+        heatmapEnabled: false,
     },
     {
         layerTitle: 'OBOT Competitors',
@@ -82,6 +85,7 @@ export const datasetState = writable([
         sourcelayer: 'OBOT_Competiors_-8g2bza',
         tilesetId: 'ethanzawadzke.a9bcsbgf',
         type: 'tileset',
+        heatmapEnabled: false,
     },
     {
         layerTitle: "Prospective Real Estate (Select last)",
@@ -92,6 +96,7 @@ export const datasetState = writable([
         sourcelayer: "Texas_Data_Sets_for_MAP__-_Sh-alm75l",
         tilesetId: 'ethanzawadzke.89q6m5fi',
         type: "tileset",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "Psychiatric Hospitals",
@@ -103,6 +108,7 @@ export const datasetState = writable([
         color: "#E79600",
         type: "geojson",
         data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20Psych%20Hospitals%20%20(1).geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "BEDS",
@@ -113,7 +119,8 @@ export const datasetState = writable([
         enabled: false,
         color: "magenta",
         type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson',
+        heatmapEnabled: false,
     },
     {
         layerTitle: "SLOTS",
@@ -124,7 +131,8 @@ export const datasetState = writable([
         enabled: false,
         color: "yellow",
         type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson',
+        heatmapEnabled: false,
     },
     {
         layerTitle: "SUD RTCs and Outpatient",
@@ -135,7 +143,8 @@ export const datasetState = writable([
         enabled: false,
         color: "yellow",
         type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson'
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson',
+        heatmapEnabled: false,
     },
     {
         layerTitle: "General Hospitals",
@@ -148,6 +157,7 @@ export const datasetState = writable([
         type: 'geojson',
         data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20General%20Hospitals%20%20(2).geojson',
         enableFilterMenu: true,
+        heatmapEnabled: false,
     },
     {
         layerTitle: "ANTEPARTUM",
@@ -158,7 +168,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20ANTEPARTUM.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20ANTEPARTUM.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "CHEMICAL DEPENDENCY",
@@ -169,7 +180,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20CHEMICAL%20DEPENDENCY.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20CHEMICAL%20DEPENDENCY.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "COMP MED REHAB",
@@ -180,7 +192,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20COMP%20MED%20REHAB.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20COMP%20MED%20REHAB.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "CONTINUING CARE",
@@ -191,7 +204,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20CONTINUING%20CARE.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20CONTINUING%20CARE.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "ICU_CCU",
@@ -202,7 +216,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20ICU_CCU.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20ICU_CCU.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "INTERMEDIATE CARE",
@@ -213,7 +228,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20INTERMEDIATE%20CARE.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20INTERMEDIATE%20CARE.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "LDRP",
@@ -224,7 +240,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20LDRP.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20LDRP.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "MED_SURG",
@@ -235,7 +252,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20MED_SURG.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20MED_SURG.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "NICU",
@@ -246,7 +264,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20NICU.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20NICU.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "PEDIATRIC",
@@ -257,7 +276,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20PEDIATRIC.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20PEDIATRIC.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "POSTPARTUM",
@@ -268,7 +288,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20POSTPARTUM.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20POSTPARTUM.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "PSYCH",
@@ -279,7 +300,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20PSYCH.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20PSYCH.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "SKILLED NURSING",
@@ -290,7 +312,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20SKILLED%20NURSING.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20SKILLED%20NURSING.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "UNIVERSAL CARE",
@@ -301,7 +324,8 @@ export const datasetState = writable([
         enabled: false,
         color: "blue",
         type: "geojson",
-        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20UNIVERSAL%20CARE.geojson"
+        data: "https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/General%20Hospital%20Individual%20Bed%20Types/GH%20-%20UNIVERSAL%20CARE.geojson",
+        heatmapEnabled: false,
     },
     {
         layerTitle: "SUD RTCs and Outpatient Heatmap Test",

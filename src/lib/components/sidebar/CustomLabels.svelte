@@ -12,8 +12,9 @@
     })
 
     let unsubscribe = mapState.subscribe(value => {
-            map = value.map;
-        });
+        map = value.map;
+    });
+
     function toggleLabelVisibility(uniqueID) {
         labelState.update(state => {
             const label = state.labels[uniqueID];
@@ -37,20 +38,19 @@
         Custom Labels ({Object.keys($labelState.labels).length})
     </button>
     {#if dropdownOpen}
-    <ul>
-    {#each Object.keys($labelState.labels) as uniqueID}
-        <li>
-            Label: {uniqueID}
-            <button on:click={() => toggleLabelVisibility(uniqueID)}>
-                {$labelState.labels[uniqueID].isVisible ? 'Hide' : 'Show'}
-            </button>
-        </li>
-    {/each}
-    
-</ul>
-{/if}
-
+        <ul>
+            {#each Object.keys($labelState.labels) as uniqueID}
+                <li>
+                    Label: {uniqueID}
+                    <button on:click={() => toggleLabelVisibility(uniqueID)}>
+                        {$labelState.labels[uniqueID].isVisible ? 'Hide' : 'Show'}
+                    </button>
+                </li>
+            {/each}
+        </ul>
+    {/if}
 </div>
+
 
 
 <style>

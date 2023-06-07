@@ -347,6 +347,11 @@ const editor = new Quill('#' + uniqueID, {
                     if (confirm("Are you sure you want to delete this label?")) {
                         // User confirmed deletion, proceed with removal
                         popup.remove();
+                        labelState.update(state => {
+                            state.editors.delete(uniqueID);
+                            delete state.labels.uniqueID;
+                            return state;
+                        });
                     }
                 },
             },
