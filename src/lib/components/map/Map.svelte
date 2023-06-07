@@ -317,14 +317,38 @@
         [{ 'font': fontNames }], // font selector
         [{ 'size': ['14px', '16px', '18px', '24px', '36px'] }],  // size options
         [{ 'color': [] }, { 'background': [] }],  // dropdown with defaults from theme
+        ['check'], // confirm styling
+        ['delete']
     ];
 
+
     const editor = new Quill('#' + uniqueID, {
-        modules: {
-            toolbar: toolbarOptions
+    modules: {
+        toolbar: {
+            container: toolbarOptions,
+            handlers: {
+                check: function() {
+                    // Simulate the right click event
+                    let event = new Event('contextmenu', {
+                        bubbles: true,
+                        cancelable: false,
+                    });
+
+                    document.getElementById(uniqueID).dispatchEvent(event);
+                },
+                delete: function() {
+          // Show confirmation dialog
+          if (confirm("Are you sure you want to delete this label?")) {
+            // User confirmed deletion, proceed with removal
+            popup.remove();
+          }
         },
-        theme: 'snow'
-    });
+            },
+        },
+    },
+    theme: 'snow',
+});
+
 
     const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
     if (editorElement) {
@@ -555,6 +579,33 @@ const toggleVisibility = function(event) {
     :global(.no-caret::before, .no-caret::after, .no-caret) {
     caret-color: transparent !important;
     }
+
+    :global(.ql-toolbar .ql-check::before) {
+    font-size: 14px;
+    content: 'Done';
+    background-color: green;
+    padding: .4rem;
+    color: white;
+    width: fit-content;
+    }
+
+    :global(.ql-toolbar .ql-delete, .ql-toolbar .ql-check) {
+        margin-right: 1rem;
+        padding: .25rem;
+    }
+
+    :global(.ql-toolbar .ql-delete::before) {
+    font-size: 14px;
+    content: 'Delete';
+    background-color: rgb(158, 1, 1);
+    padding: .4rem;
+    color: white;
+    }
+
+    :global(.mapboxgl-popup.popuptest .mapboxgl-popup-close-button) {
+  display: none;
+}
+
 
 
 
