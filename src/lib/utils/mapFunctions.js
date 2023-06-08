@@ -381,8 +381,8 @@ function addGenericLayer(map, layer) {
             'circle-radius': [
                 'interpolate',
                 ['linear'],
-                ['get', 'BEDS'],
-                0, 2,
+                ['coalesce', ['get', 'BEDS'], ['get', 'SLOTS']],
+                0, 5,
                 899, 40
             ],
             'circle-color': layer.color,
@@ -392,6 +392,7 @@ function addGenericLayer(map, layer) {
         }
     });
 }
+
 
 function addGeoJsonCluster(map, layer) {
     if (layer.cluster) {
