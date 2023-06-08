@@ -631,9 +631,9 @@ const toggleVisibility = function(event) {
     }
 
     /* set mapbox popup tip displays to none */
-    :global(.mapboxgl-popup-tip) {
+    /* :global(.mapboxgl-popup-tip) {
         display: none;
-    }
+    } */
 
     :global(.ql-toolbar) {
         background-color: white;
