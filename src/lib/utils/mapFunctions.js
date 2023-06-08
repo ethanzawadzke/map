@@ -215,8 +215,8 @@ function addHeatmapLayer(map, layer) {
                 'interpolate',
                 ['linear'],
                 ['get', 'BEDS'],
-                0, 0,
-                550, 1
+                2, .002,
+                1000, 1
             ],
             // Increase the heatmap color weight weight by zoom level
             // heatmap-intensity is a multiplier on top of heatmap-weight
@@ -224,7 +224,7 @@ function addHeatmapLayer(map, layer) {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 1,
+                5, 1,
                 9, 3
             ],
             // Color ramp of heatmap. Domain is 0 (low) to 1 (high).
@@ -246,19 +246,19 @@ function addHeatmapLayer(map, layer) {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 15,
-                9, 30
+                0, 3,
+                9, 45
             ],
             // Transition from heatmap to circle layer by zoom level
-            'heatmap-opacity': [
+            /* 'heatmap-opacity': [
                 'interpolate',
                 ['linear'],
                 ['zoom'],
                 7, 1,
                 9, 0
-            ],
+            ], */
         }
-    });
+    }, 'waterway-label');
 }
 
 
