@@ -187,61 +187,95 @@
                         this.style.color = 'black';
                     };
                     countButton.onclick = function() {
-    // Get the circle's center and radius
-    let center = circleObject.circle.getCenter();
-    let radius = circleObject.circle.getRadius();  // Assuming this is in meters
+                        // Get the circle's center and radius
+                        let center = circleObject.circle.getCenter();
+                        let radius = circleObject.circle.getRadius();  // Assuming this is in meters
 
-    // Convert the circle center to a LngLat object
-    let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
+                        // Convert the circle center to a LngLat object
+                        let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
 
-    // Get all active layers
-    let activeLayers = $datasetState.filter(dataset => dataset.enabled);
+                        // Get all active layers
+                        let activeLayers = $datasetState.filter(dataset => dataset.enabled);
 
-    // Initialize the total feature count
-    let totalFeatureCount = 0;
+                        // Initialize the total feature count
+                        let totalFeatureCount = 0;
 
-    // Initialize the total beds count
-    let totalBedsCount = 0;
+                        // Initialize the total beds count
+                        let totalBedsCount = 0;
 
-    // Initialize the total slots count
-    let totalSlotsCount = 0;
+                        // Initialize the total slots count
+                        let totalSlotsCount = 0;
 
-    // For each active layer...
-    for (let dataset of activeLayers) {
-        // Query all rendered features in the current layer without specifying bounds
-        let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
 
-        // For each feature in the current layer...
-        for (let feature of features) {
-            // Convert the feature coordinates to a LngLat object
-            let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
+                        let testflag = false;
 
-            // Calculate the distance from the circle center to the feature in meters
-            let distance = lngLatCenter.distanceTo(lngLatFeature);
+                        console.log(activeLayers);
+                        let featureSet = new Set();
 
-            // If the distance is less than the circle radius, the feature lies within the circle
-            if (distance < radius) {
-                // Increase the total feature count
-                totalFeatureCount++;
+                        // For each active layer...
+                        for (let dataset of activeLayers) {
+                            // Query all rendered features in the current layer without specifying bounds
+                            let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
 
-                // Check if the feature has a 'BEDS' property
-                if (feature.properties.BEDS) {
-                    // Ensure that 'BEDS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
-                    totalBedsCount += parseInt(feature.properties.BEDS, 10);
-                }
-                
-                // Check if the feature has a 'SLOTS' property
-                if (feature.properties.SLOTS) {
-                    // Ensure that 'SLOTS' is a number. If it is not, consider using parseInt or parseFloat as appropriate
-                    totalSlotsCount += parseInt(feature.properties.SLOTS, 10);
-                }
-            }
-        }
-    }
+                            for (let feature of features) {
+                                // Convert the feature coordinates to a LngLat object
+                                let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
 
-    popup.remove();
-    window.alert("Total feature count: " + totalFeatureCount/2 + "\nTotal beds count: " + totalBedsCount/2 + "\nTotal slots count: " + totalSlotsCount/2);
-};
+                                // Calculate the distance from the circle center to the feature in meters
+                                let distance = lngLatCenter.distanceTo(lngLatFeature);
+
+                                // If the distance is less than the circle radius, the feature lies within the circle
+                                if (distance < radius) {
+                                    // Add the feature to the set
+                                    featureSet.add(JSON.stringify(feature));
+                                }
+                            }
+                        }
+
+                        // Convert the Set back to an array and parse each feature back into an object
+                        let featuresWithinCircle = Array.from(featureSet).map(featureStr => JSON.parse(featureStr));
+
+                        console.log("Features within circle:", featuresWithinCircle);
+
+                        popup.remove();
+
+                        let totalBeds = 0;
+                        let totalSlots = 0;
+
+                        for (let feature of featuresWithinCircle) {
+                        // If 'BEDS' and 'SLOTS' aren't null or 0, add to both counts
+                        if (feature.properties.BEDS != null && feature.properties.BEDS != 0 && feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
+                            console.log("Feature:", feature.properties.BEDS, feature.properties.SLOTS);
+                            totalBeds += feature.properties.BEDS/2;
+                            totalSlots += feature.properties.SLOTS/2;
+                            totalFeatureCount++;
+
+                        }
+                        // Else if 'BEDS' isn't null or 0, add to total beds
+                        else if (feature.properties.BEDS != null && feature.properties.BEDS != 0) {
+                            totalBeds += feature.properties.BEDS;
+                            totalFeatureCount++;
+                        }
+                        // Else if 'SLOTS' isn't null or 0, add to total slots
+                        else if (feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
+                            totalSlots += feature.properties.SLOTS;
+                            totalFeatureCount++;
+                        }
+                    }
+
+
+                        console.log("Total features within circle:", totalFeatureCount);
+                        console.log("Total beds within circle:", totalBeds);
+                        console.log("Total slots within circle:", totalSlots);
+
+                        if (totalFeatureCount > 1) {
+                            totalFeatureCount--;
+                        }
+
+                        //create alert with counts
+                        alert("Total features within circle: " + totalFeatureCount + "\nTotal beds within circle: " + totalBeds + "\nTotal slots within circle: " + totalSlots);
+                        
+                    };
 
 
 

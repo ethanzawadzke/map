@@ -246,8 +246,8 @@ function addHeatmapLayer(map, layer) {
                 'interpolate',
                 ['linear'],
                 ['zoom'],
-                0, 10,
-                9, 20
+                0, 15,
+                9, 30
             ],
             // Transition from heatmap to circle layer by zoom level
             'heatmap-opacity': [
