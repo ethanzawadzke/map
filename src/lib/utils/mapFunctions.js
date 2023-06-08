@@ -339,7 +339,7 @@ function addSpecificLayer(map, layer, suffix, color, feature) {
                 'interpolate',
                 ['linear'],
                 ['get', feature],
-                0, 2, // Minimum number of feature corresponds to a minimum radius
+                0, 5, // Minimum number of feature corresponds to a minimum radius
                 899, 40 // Maximum number of feature corresponds to a maximum radius
             ],
         }

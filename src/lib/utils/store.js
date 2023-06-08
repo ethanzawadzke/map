@@ -119,7 +119,7 @@ export const datasetState = writable([
         enabled: false,
         color: "magenta",
         type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson',
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20RTC%20BEDS.geojson',
         heatmapEnabled: false,
     },
     {
@@ -131,7 +131,7 @@ export const datasetState = writable([
         enabled: false,
         color: "yellow",
         type: "geojson",
-        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20Copy%20of%20SUD%20RTC%20and%20Outpatient.geojson',
+        data: 'https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/Texas%20Data%20Sets%20for%20MAP%20%20-%20OP%20SLOTS.geojson',
         heatmapEnabled: false,
     },
     {

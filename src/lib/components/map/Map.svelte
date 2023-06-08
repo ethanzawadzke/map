@@ -268,12 +268,10 @@
                         console.log("Total beds within circle:", totalBeds);
                         console.log("Total slots within circle:", totalSlots);
 
-                        if (totalFeatureCount > 1) {
-                            totalFeatureCount--;
-                        }
-
                         //create alert with counts
                         alert("Total features within circle: " + totalFeatureCount + "\nTotal beds within circle: " + totalBeds + "\nTotal slots within circle: " + totalSlots);
+
+                        totalFeatureCount = 0;
                         
                     };
 
