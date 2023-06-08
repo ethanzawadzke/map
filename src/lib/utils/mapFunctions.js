@@ -216,7 +216,7 @@ function addHeatmapLayer(map, layer) {
                 ['linear'],
                 ['get', 'BEDS'],
                 2, .002,
-                1000, 1
+                500, 1
             ],
             // Increase the heatmap color weight weight by zoom level
             // heatmap-intensity is a multiplier on top of heatmap-weight
