@@ -614,7 +614,7 @@ export function createPopup(map, popup, e, features) {
     let feature = features[0]; // the topmost feature
     let properties = feature.properties;
     let description = '';
-    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || properties['ZCAT5CE10'] || 'NAME NOT FOUND';
+    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || properties['ZCTA5CE10'] || 'NAME NOT FOUND';
     let header = `<h2>${name}</h2>`;
     for (let property in properties) {
         description += `<strong>${property}:</strong> ${properties[property]}<br>`;
