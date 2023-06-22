@@ -14,11 +14,214 @@
     let Quill;
 
     let drawnCircles = {};
+    let labelsWithEditors = [];
+
+    const drawLabels = (labelsData) => {
+        Object.values(labelsData).forEach((labelData) => {
+            const uniqueID = labelData.id;
+            console.log(labelData.text)
+
+            console.log('LabelData: ', labelData);
+            console.log("In forEach, labelData.position:", labelData.position);
+
+            // Initialize the popup
+            const popup = new mapboxgl.Popup({
+                closeOnClick: false, 
+                closeButton: false,
+                anchor: 'bottom',
+                offset: [0, -20],
+                maxWidth: 'none', 
+            })
+            .addClassName(`popup-${uniqueID}`)
+            .setLngLat(labelData.position)
+            .setHTML(`<div id="${uniqueID}">${labelData.text}</div>`)
+            .addTo(map);
+
+            // Set the style for the popup content
+            const popupContentElement = popup.getElement().querySelector('.mapboxgl-popup-content');
+            if (popupContentElement) {
+                popupContentElement.style.backgroundColor = labelData.isTransparent ? 'transparent' : labelData.color;
+                //set padding to 0
+                popupContentElement.style.padding = '0px';
+            }
+
+            // Set the font for the text
+            const textElement = popup.getElement().querySelector(`#${uniqueID}`);
+            if (textElement) {
+                textElement.style.fontFamily = labelData.font;
+                textElement.style.fontSize = labelData.fontSize;
+            }
+
+            // More of your Quill logic goes here
+             var fonts = ['Arial', 'Courier', 'Garamond', 'Tahoma', 'Times New Roman', 'Verdana'];
+                        // generate code friendly names
+                        function getFontName(font) {
+                            return font.toLowerCase().replace(/\s/g, "-");
+                        }
+                        var fontNames = fonts.map(font => getFontName(font));
+                        // add fonts to style
+                        var fontStyles = "";
+                        fonts.forEach(function(font) {
+                            var fontName = getFontName(font);
+                            fontStyles += ".ql-snow .ql-picker.ql-font .ql-picker-label[data-value=" + fontName + "]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=" + fontName + "]::before {" +
+                                "content: '" + font + "';" +
+                                "font-family: '" + font + "', sans-serif;" +
+                                "}" +
+                                ".ql-font-" + fontName + "{" +
+                                " font-family: '" + font + "', sans-serif;" +
+                                "}";
+                        });
+                        var node = document.createElement('style');
+                        node.innerHTML = fontStyles;
+                        document.body.appendChild(node);
+
+                        // Register custom formats
+                        var Size = Quill.import('attributors/style/size');
+                        Size.whitelist = ['14px', '16px', '18px', '24px', '36px'];
+                        Quill.register(Size, true);
+
+                        // Add fonts to whitelist
+                        var Font = Quill.import('formats/font');
+                        Font.whitelist = fontNames;
+                        Quill.register(Font, true);
+
+                        const toolbarOptions = [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'font': fontNames }], // font selector
+                            [{ 'size': ['14px', '16px', '18px', '24px', '36px'] }],  // size options
+                            [{ 'color': [] }, { 'background': [] }],  // dropdown with defaults from theme
+                            ['check'], // confirm styling
+                            ['delete']
+                        ];
+
+                        if (!labelsWithEditors.includes(uniqueID)) {
+                        // Initialize Quill editor first
+                        const editor = new Quill('#' + uniqueID, {
+                            modules: {
+                                toolbar: {
+                                    container: toolbarOptions,
+                                    handlers: {
+                                        check: function() {
+                                            // Simulate the right click event
+                                            let event = new Event('contextmenu', {
+                                                bubbles: true,
+                                                cancelable: false,
+                                            });
+
+                                            document.getElementById(uniqueID).dispatchEvent(event);
+                                        },
+                                        delete: async function() {
+                                            // Show confirmation dialog
+                                            if (confirm("Are you sure you want to delete this label?")) {
+                                                // User confirmed deletion, proceed with removal
+                                                popup.remove();
+
+                                                // Update label state by removing this label
+                                                labelState.update(state => {
+                                                    delete state.labels[uniqueID];
+                                                    return state;
+                                                });
+
+                                                // Remove this label's ID from labelsWithEditors if it's there
+                                                const index = labelsWithEditors.indexOf(uniqueID);
+                                                if (index > -1) {
+                                                    labelsWithEditors.splice(index, 1);
+                                                }
+                                            }
+                                        },
+
+                                    },
+                                },
+                            },
+                            theme: 'snow',
+                        });
+
+                        // Listen for text changes in the editor
+                        editor.on('text-change', function() {
+                            const text = editor.getText();
+                            labelState.update(state => {
+                                if (state.labels[uniqueID]) {
+                                    state.labels[uniqueID].text = text;
+                                }
+                                return state;
+                            });
+                        });
+
+
+
+                        const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
+                        if (editorElement) {
+                            $labelState.isTransparent ? editorElement.style.backgroundColor = 'transparent' : $labelState.activeColor;
+                        }
+
+                        let isVisible = true;
+
+                        // Function to toggle the editor visibility
+                        // Function to toggle the editor visibility
+                        const toggleVisibility = function(event) {
+                            event.preventDefault();
+                            const popupContentElement = event.currentTarget;
+                            console.log(popupContentElement)
+                            const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
+                            const closeButtonElement = popupContentElement.querySelector('.mapboxgl-popup-close-button');
+                            const editorElement = popupContentElement.querySelector('.ql-editor');
+
+                            if (toolbarElement) {
+                                console.log('toolbarElement exists')
+                                isVisible = !isVisible;
+                                toolbarElement.style.display = isVisible ? '' : 'none';
+                                
+                                // Toggle the no-caret class on the editor element
+                                if (isVisible) {
+                                    if (editorElement) {
+                                        editorElement.classList.remove('no-caret');
+                                    }
+                                } else {
+                                    if (editorElement) {
+                                        editorElement.classList.add('no-caret');
+                                    }
+                                }
+                            }
+
+                            
+
+                            console.log($labelState)
+                        };
+
+                        // Function to prevent event bubbling on button click
+                        const buttonClickHandler = function(event) {
+                            event.stopPropagation();
+                            toggleVisibility(event);
+                        }
+
+                        // Add event listener to the popup
+                        document.getElementById(uniqueID).parentNode.addEventListener('contextmenu', toggleVisibility);
+
+                
+                        popup.on('close', () => {
+                            // Remove event listeners when the popup is closed
+                            /* document.getElementById(buttonID).removeEventListener('click', buttonClickHandler); */
+                            let element = document.getElementById(uniqueID);
+                            if(element) {
+                                element.parentNode.removeEventListener('click', toggleVisibility);
+                            }
+
+
+                            // Update label state by removing the editor from the editors map
+                            // and if it was the active editor, set activeEditor to null
+                         
+                        });
+
+                        labelsWithEditors.push(uniqueID);
+                    }
+
+        });
+    }
 
     function addContextMenuHandler(circleData, circleObject, map, popup) {
         circleObject.on('contextmenu', function(e) {
             e.preventDefault();
-            console.log('Opening context menu...')
+            console.log('Opening context menu....')
 
             circleState.update(state => {
                 state.contextMenuOpen = true;
@@ -309,7 +512,7 @@
 
         const mapSources = {
             'counties-dataset': 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg',
-            'txzips-6-22-2023-lean': 'mapbox://ethanzawadzke.clj6y2qrc20dc2hnxzx8r30c5-0rfdk',
+            'txzipdata': 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw',
             'txlunchdatafinal': 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
         };
 
@@ -344,205 +547,33 @@
                         return state;
                     });
                 } else if ($toolState.tool === "Label") {
-                        // Label creation logic
-                        const uniqueID = "editor-" + Date.now();
-                        const buttonID = "toggle-button-" + uniqueID;
+                    // Label creation logic
+                    const uniqueID = "editor-" + Date.now();
+                    
+                    // Creating the necessary structure and data for the label
+                    const labelData = {
+                        id: uniqueID,
+                        position: { lng: e.lngLat.lng, lat: e.lngLat.lat },
+                        isTransparent: $labelState.isTransparent,
+                        color: $labelState.activeColor,
+                        font: $labelState.activeFont,
+                        fontSize: $labelState.activeFontSize,
+                        text: '',
+                    };
+                    
+                    // Add the new label data to the label state
+                    labelState.update(state => {
+                        state.labels[uniqueID] = labelData;
+                        console.log("FUCK OFF", state.labels);
+                        return state;
+                    });
 
-                        const popup = new mapboxgl.Popup({
-                            closeOnClick: false, 
-                            closeButton: false,
-                            anchor: 'bottom',
-                            offset: [0, -20],
-                            maxWidth: 'none', 
-                        })
-                        .addClassName(`popup-${uniqueID}`)
-                        .setLngLat(e.lngLat)
-                        .setHTML(`<div id="${uniqueID}"></div>`)
-                        .addTo(map);
+                    toolState.update(state => {
+                        state.tool = null;
+                        return state;
+                    });
+                }
 
-                        const popupContentElement = popup.getElement().querySelector('.mapboxgl-popup-content');
-                        if (popupContentElement) {
-                            popupContentElement.style.backgroundColor = $labelState.isTransparent ? 'transparent' : $labelState.activeColor;
-                            //set padding to 0
-                            popupContentElement.style.padding = '0px';
-                        }
-
-                        console.log($labelState)
-
-                        // specify the fonts you would 
-                        var fonts = ['Arial', 'Courier', 'Garamond', 'Tahoma', 'Times New Roman', 'Verdana'];
-                        // generate code friendly names
-                        function getFontName(font) {
-                            return font.toLowerCase().replace(/\s/g, "-");
-                        }
-                        var fontNames = fonts.map(font => getFontName(font));
-                        // add fonts to style
-                        var fontStyles = "";
-                        fonts.forEach(function(font) {
-                            var fontName = getFontName(font);
-                            fontStyles += ".ql-snow .ql-picker.ql-font .ql-picker-label[data-value=" + fontName + "]::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value=" + fontName + "]::before {" +
-                                "content: '" + font + "';" +
-                                "font-family: '" + font + "', sans-serif;" +
-                                "}" +
-                                ".ql-font-" + fontName + "{" +
-                                " font-family: '" + font + "', sans-serif;" +
-                                "}";
-                        });
-                        var node = document.createElement('style');
-                        node.innerHTML = fontStyles;
-                        document.body.appendChild(node);
-
-                        // Register custom formats
-                        var Size = Quill.import('attributors/style/size');
-                        Size.whitelist = ['14px', '16px', '18px', '24px', '36px'];
-                        Quill.register(Size, true);
-
-                        // Add fonts to whitelist
-                        var Font = Quill.import('formats/font');
-                        Font.whitelist = fontNames;
-                        Quill.register(Font, true);
-
-                        const toolbarOptions = [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            [{ 'font': fontNames }], // font selector
-                            [{ 'size': ['14px', '16px', '18px', '24px', '36px'] }],  // size options
-                            [{ 'color': [] }, { 'background': [] }],  // dropdown with defaults from theme
-                            ['check'], // confirm styling
-                            ['delete']
-                        ];
-
-                        // Initialize Quill editor first
-                        const editor = new Quill('#' + uniqueID, {
-                            modules: {
-                                toolbar: {
-                                    container: toolbarOptions,
-                                    handlers: {
-                                        check: function() {
-                                            // Simulate the right click event
-                                            let event = new Event('contextmenu', {
-                                                bubbles: true,
-                                                cancelable: false,
-                                            });
-
-                                            document.getElementById(uniqueID).dispatchEvent(event);
-                                        },
-                                        delete: async function() {
-                                        // Show confirmation dialog
-                                        if (confirm("Are you sure you want to delete this label?")) {
-                                            // User confirmed deletion, proceed with removal
-                                            popup.remove();
-                                            await labelState.update(state => 
-                                                {
-                                                    state.editors.delete(`popup-${uniqueID}`);
-                                                    delete state.labels[`popup-${uniqueID}`];
-                                                    return state;
-                                                });
-                                            }
-                                        },
-                                    },
-                                },
-                            },
-                            theme: 'snow',
-                        });
-
-                        // Then add it to labelState
-                        labelState.update(state => {
-                            state.editors.set(uniqueID, editor);
-                            state.labels[uniqueID] = {
-                                popup: popup,
-                                isVisible: true
-                            };
-                            return state;
-                        });
-
-
-                        const editorElement = document.querySelector('#' + uniqueID + ' .ql-editor');
-                        if (editorElement) {
-                            $labelState.isTransparent ? editorElement.style.backgroundColor = 'transparent' : $labelState.activeColor;
-                        }
-
-                        let isVisible = true;
-
-                        // Function to toggle the editor visibility
-                        // Function to toggle the editor visibility
-                        const toggleVisibility = function(event) {
-                            event.preventDefault();
-                            const popupContentElement = event.currentTarget;
-                            console.log(popupContentElement)
-                            const toolbarElement = popupContentElement.querySelector('.ql-toolbar');
-                            const closeButtonElement = popupContentElement.querySelector('.mapboxgl-popup-close-button');
-                            const editorElement = popupContentElement.querySelector('.ql-editor');
-
-                            if (toolbarElement) {
-                                console.log('toolbarElement exists')
-                                isVisible = !isVisible;
-                                toolbarElement.style.display = isVisible ? '' : 'none';
-                                
-                                // Toggle the no-caret class on the editor element
-                                if (isVisible) {
-                                    if (editorElement) {
-                                        editorElement.classList.remove('no-caret');
-                                    }
-                                } else {
-                                    if (editorElement) {
-                                        editorElement.classList.add('no-caret');
-                                    }
-                                }
-                            }
-
-                            labelState.update(state => {
-                                    /* state.labels[uniqueID].isVisible = !isVisible; */
-                                    //check if the label is visible, if it is, set it to false, if it isn't, set it to true
-                                    state.labels[uniqueID].isVisible = state.labels[uniqueID].isVisible ? true : false;
-                                    return state;
-                                });
-
-                            console.log($labelState)
-                        };
-
-                        // Function to prevent event bubbling on button click
-                        const buttonClickHandler = function(event) {
-                            event.stopPropagation();
-                            toggleVisibility(event);
-                        }
-
-                        // Add event listener to the popup
-                        document.getElementById(uniqueID).parentNode.addEventListener('contextmenu', toggleVisibility);
-
-                        // Update label state with the new editor
-                        labelState.update(state => {
-                            state.editors.set(uniqueID, editor);
-                            return state;
-                        });
-
-                        popup.on('close', () => {
-                            // Remove event listeners when the popup is closed
-                            /* document.getElementById(buttonID).removeEventListener('click', buttonClickHandler); */
-                            let element = document.getElementById(uniqueID);
-                            if(element) {
-                                element.parentNode.removeEventListener('click', toggleVisibility);
-                            }
-
-
-                            // Update label state by removing the editor from the editors map
-                            // and if it was the active editor, set activeEditor to null
-                            labelState.update(state => {
-                                state.editors.delete(uniqueID);
-                                delete state.labels[uniqueID];
-
-                                if (state.activeEditor === editor) {
-                                    state.activeEditor = null;
-                                }
-
-                                return state;
-                            });
-                        });
-
-                        toolState.update(state => {
-                            state.tool = null;
-                            return state;
-                        });
-                    }
 
                     else {
                     var features = map.queryRenderedFeatures(e.point);
@@ -568,6 +599,16 @@
             console.log("DatasetState store changed, now executing function...");
             console.log("DatasetState: ", $datasetState);
             handleLayer(map, $datasetState);
+        });
+
+        const unsubscribeLabel = labelState.subscribe(value => {
+            console.log("LabelState store changed, now executing function...");
+            console.log("LabelState: ", $labelState.labels);
+
+            console.log("PIECE OF SHUT", value.labels)
+            
+            
+            drawLabels(value.labels);
         });
 
         const unsubscribeCircles = circleState.subscribe(value => {
@@ -623,9 +664,9 @@
                     url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
                 });
 
-                map.addSource('txzips-6-22-2023-lean', {
+                map.addSource('suckmyfuckingcockmapbox', {
                     type: 'vector',
-                    url: 'mapbox://ethanzawadzke.clj6y2qrc20dc2hnxzx8r30c5-0rfdk'
+                    url: 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw'
                 });
 
                 map.addSource('txlunchdatafinal', {

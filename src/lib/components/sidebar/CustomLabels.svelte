@@ -1,31 +1,32 @@
 <script>
-    import { labelState, mapState } from '$lib/utils/store.js';
+    import { labelState, mapState, labelLocations, labelTexts } from '$lib/utils/store.js';
     import { onMount } from 'svelte';
-
-    import mapboxgl from 'mapbox-gl';
 
     let map = null;
     let dropdownOpen = false;
 
     onMount(() => {
-        map = mapState.map;
+        // Subscribe to mapState store and set map variable
+        const unsubscribe = mapState.subscribe(value => {
+            if (value && value.map) {
+                map = value.map;
+            }
+        });
     })
 
-    let unsubscribe = mapState.subscribe(value => {
-        map = value.map;
+
+// Then in your toggleVisibility function:
+const toggleVisibility = (id) => {
+    labelTexts.update(state => {
+        state.labels[id].isVisible = !state.labels[id].isVisible;
+        const popupElement = document.querySelector(`.popup-${id}`);
+        if (popupElement) {
+            popupElement.style.visibility = state.labels[id].isVisible ? 'visible' : 'hidden';
+        }
+        return state;
     });
+};
 
-    function toggleLabelVisibility(uniqueID) {
-        labelState.update(state => {
-            const label = state.labels[uniqueID];
-            label.isVisible = !label.isVisible;
-
-            // Toggle popup visibility on the map
-            label.popup[label.isVisible ? 'addTo' : 'remove'](map);
-
-            return state;
-        });
-    }
 </script>
 
 <div class="sidebar-section">
@@ -35,21 +36,26 @@
         {:else}
             <span>+</span>
         {/if}
-        Custom Labels ({Object.keys($labelState.labels).length})
+        Custom Labels ({Object.keys($labelTexts).length})
     </button>
     {#if dropdownOpen}
         <ul>
-            {#each Object.keys($labelState.labels) as uniqueID}
+            {#each Object.keys($labelTexts) as labelId}
                 <li>
-                    Label: {uniqueID}
-                    <button on:click={() => toggleLabelVisibility(uniqueID)}>
-                        {$labelState.labels[uniqueID].isVisible ? 'Hide' : 'Show'}
+                    <span>{labelId}</span>
+                    <button on:click={() => toggleVisibility(labelId)}>
+                        {#if $labelTexts[labelId].isVisible}
+                            Hide
+                        {:else}
+                            Show
+                        {/if}
                     </button>
                 </li>
             {/each}
         </ul>
     {/if}
 </div>
+
 
 
 

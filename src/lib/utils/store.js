@@ -1,11 +1,22 @@
 import { writable } from 'svelte/store';
 
+export const loadMap = writable({
+    loaded: false,
+    activeMap: null,
+});
+
 export const mapState = writable({
     map: null,
 });
 
+// labelLocations store will hold the unique ID and coordinates of each label
+export const labelLocations = writable({});
+
+// labelTexts store will hold the unique ID, text, visibility, and other changeable properties of each label
+export const labelTexts = writable({});
+
 export const labelState = writable({
-    activeColor: 'white',
+    activeColor: '#ffffff',
     activeEditor: null,
     editors: new Map(),
     labels: {},
@@ -29,14 +40,11 @@ export const toolState = writable({
     tool: null
 });
 
-
-
 export const circleState = writable({
-    radius: null,
+    radius: 10,
     color: "#ff0000",
-    circles: {}
+    circles: {},
 });
-
 
 export const choroSettings = writable({
     layerTitles: [],

@@ -3,9 +3,9 @@
     import { accessToken, datasetId } from '$lib/utils/mapboxConfig.js';
     import { choroSettings } from '$lib/utils/store.js'
 
-    const url1 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=50&access_token=${accessToken}`;
+    const url1 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${datasetId}/features?limit=100&access_token=${accessToken}`;
 
-    const url2 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/clij9wtk24rqw2jpi63kwtsy9/features?limit=50&access_token=${accessToken}`;
+    const url2 = `https://api.mapbox.com/datasets/v1/ethanzawadzke/clj6y2qrc20dc2hnxzx8r30c5/features?limit=100&access_token=sk.eyJ1IjoiZXRoYW56YXdhZHprZSIsImEiOiJjbGo2dzRmNTQwbjN2M2tudmh6amx3eDh2In0.cZuc0Z37c3wBz4q3V-XeDw`;
 
     let dropdownOpen = false;
 
@@ -23,15 +23,12 @@
             // Fetch data from second URL
             const response2 = await fetch(url2);
             const data2 = await response2.json();
-            const properties2 = data2.features[4].properties;
+            const properties2 = data2.features[99].properties;
             const propertyNames2 = Object.keys(properties2);
             const numericProperties2 = propertyNames2;
 
-            // Limit the numeric properties from the second URL to the last four
-            const lastFourNumericProperties2 = numericProperties2;
-
             // Combine the numeric properties from the first URL with the last four from the second URL
-            const combinedNumericProperties = [...numericProperties1, ...lastFourNumericProperties2];
+            const combinedNumericProperties = [...numericProperties1, ...numericProperties2];
 
             choroSettings.update(state => {
                 return {

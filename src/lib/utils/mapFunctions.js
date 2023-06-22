@@ -26,6 +26,98 @@ export function clearLayers(map) {
 
 export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
     return new Promise((resolve, reject) => {
+        const validTitles = [
+            'Median Income Rank (0-99)',
+            'Professional (%)',
+            'Population',
+            'Median Rooms In Home',
+            'AWATER10',
+            'city',
+            'state_id',
+            'state_name',
+            'zcta',
+            'parent_zcta',
+            'population',
+            'density',
+            'county_fips',
+            'county_name',
+            'county_weights',
+            'county_names_all',
+            'county_fips_all',
+            'imprecise',
+            'military',
+            'timezone',
+            'age_median',
+            'age_under_10',
+            'age_10_to_19',
+            'age_20s',
+            'age_30s',
+            'age_40s',
+            'age_50s',
+            'age_60s',
+            'age_70s',
+            'age_over_80',
+            'male',
+            'female',
+            'married',
+            'divorced',
+            'never_married',
+            'widowed',
+            'family_size',
+            'family_dual_income',
+            'income_household_median',
+            'income_household_under_5',
+            'income_household_5_to_10',
+            'income_household_10_to_15',
+            'income_household_15_to_20',
+            'income_household_20_to_25',
+            'income_household_25_to_35',
+            'income_household_35_to_50',
+            'income_household_50_to_75',
+            'income_household_75_to_100',
+            'income_household_100_to_150',
+            'income_household_150_over',
+            'income_household_six_figure',
+            'income_individual_median',
+            'home_ownership',
+            'housing_units',
+            'home_value',
+            'rent_median',
+            'rent_burden',
+            'education_less_highschool',
+            'education_highschool',
+            'education_some_college',
+            'education_bachelors',
+            'education_graduate',
+            'education_college_or_above',
+            'education_stem_degree',
+            'labor_force_participation',
+            'unemployment_rate',
+            'self_employed',
+            'farmer',
+            'race_white',
+            'race_black',
+            'race_asian',
+            'race_native',
+            'race_pacific',
+            'race_other',
+            'race_multiple',
+            'hispanic',
+            'disabled',
+            'poverty',
+            'limited_english',
+            'commute_time',
+            'health_uninsured',
+            'veteran',
+            'charitable_givers',
+            'cbsa_fips',
+            'cbsa_name',
+            'cbsa_metro',
+            'csa_fips',
+            'csa_name',
+            'metdiv_fips',
+            'metdiv_name'
+        ];
 
         let test = null; 
 
@@ -35,10 +127,10 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             if (layerTitle === "ENROLLED PCT") {
                 console.log('Layer set to ENROLLED PCT')
                 test = 'clihvcvkk12832dp41bdytixx'
-            } else if (layerTitle === 'Median Income Rank(0 - 99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
+            } else if (validTitles.includes(layerTitle)) {
                 console.log('Layer set to Texas Zip Code Data')
                 console.log(layerTitle)
-                test ='clij9wtk24rqw2jpi63kwtsy9'
+                test ='clj6y2qrc20dc2hnxzx8r30c5'
             } else {
                 test = null;
             }
@@ -56,8 +148,8 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             if (test !== null) {
                 if (layerTitle === 'ENROLLED PCT') {
                     source = 'txlunchdatafinal'
-                } else if (layerTitle === 'Median Income Rank (0-99)' || layerTitle === 'Professional (%)' || layerTitle === 'Population' || layerTitle === 'Median Rooms In Home' || layerTitle === 'AWATER10') {
-                    source = 'suckmyfuckingcockmapbox'
+                } else if (validTitles.includes(layerTitle)) {
+                    source = 'txzips-6-22-2023-lean'
                 }
             } else {
                 source = 'counties-dataset'
@@ -66,7 +158,7 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
             if (test !== null) {
                 if (layerTitle  === 'ENROLLED PCT') {
                     url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
-                } else if (layerTitle === 'Median Income Rank (0-99)' || 'Professional (%)' || 'Population' || 'Median Rooms In Home') {
+                } else if (validTitles.includes(layerTitle)) {
                     url = `https://api.mapbox.com/datasets/v1/ethanzawadzke/${test}/features?limit=50&access_token=${accessToken}`;
                 }
                 else {
@@ -85,12 +177,13 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                     let maxPop = -Infinity;
                     for (let feature of data.features) {
                         let pop;
-                        if (feature.properties.hasOwnProperty(selectedLayer) && feature.properties[selectedLayer] !== undefined) {
+                        if (feature.properties.hasOwnProperty(selectedLayer) && feature.properties[selectedLayer] !== undefined && feature.properties[selectedLayer] !== "") {
                             pop = feature.properties[selectedLayer];
                             pop = typeof pop === 'string' ? parseFloat(pop) : pop;
                         } else {
-                            pop = 0; // Set the value to 0 if the property does not exist
+                            pop = 0; // Set the value to 0 if the property does not exist or is an empty string
                         }
+
 
                         console.log(pop)
                         minPop = Math.min(minPop, pop);
@@ -516,11 +609,12 @@ export function createPopup(map, popup, e, features) {
     if (!features.length) {
         return;
     }
+    console.log(features[0].properties['ZCTA5CE10']);
 
     let feature = features[0]; // the topmost feature
     let properties = feature.properties;
     let description = '';
-    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || 'NAME NOT FOUND';
+    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || properties['ZCAT5CE10'] || 'NAME NOT FOUND';
     let header = `<h2>${name}</h2>`;
     for (let property in properties) {
         description += `<strong>${property}:</strong> ${properties[property]}<br>`;

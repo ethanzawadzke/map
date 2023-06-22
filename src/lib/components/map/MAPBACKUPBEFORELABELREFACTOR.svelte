@@ -309,7 +309,7 @@
 
         const mapSources = {
             'counties-dataset': 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg',
-            'txzips-6-22-2023-lean': 'mapbox://ethanzawadzke.clj6y2qrc20dc2hnxzx8r30c5-0rfdk',
+            'txzipdata': 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw',
             'txlunchdatafinal': 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
         };
 
@@ -623,9 +623,9 @@
                     url: 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg'
                 });
 
-                map.addSource('txzips-6-22-2023-lean', {
+                map.addSource('suckmyfuckingcockmapbox', {
                     type: 'vector',
-                    url: 'mapbox://ethanzawadzke.clj6y2qrc20dc2hnxzx8r30c5-0rfdk'
+                    url: 'mapbox://ethanzawadzke.clij9wtk24rqw2jpi63kwtsy9-070lw'
                 });
 
                 map.addSource('txlunchdatafinal', {

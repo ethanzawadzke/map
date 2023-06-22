@@ -5,9 +5,17 @@
     import MapStyleSelector from '$lib/components/sidebar/MapStyleSelector.svelte';
     import MapLayers from '$lib/components/sidebar/MapLayers.svelte';
     import CustomLabels from '$lib/components/sidebar/CustomLabels.svelte';
+    import { loadMap } from '$lib/utils/store.js';
+
+    const loadMapData = () => {
+        loadMap.update(value => {
+            return {...value, loaded: false}
+        })
+    }
 </script>
 
 <div class="sidebar">
+    <button class="btn btn-primary" on:click={loadMapData}>Back</button>
     <LayerSelect />
     <DatasetSelector />
     <MapStyleSelector />
