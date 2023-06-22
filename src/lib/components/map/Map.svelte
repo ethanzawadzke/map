@@ -658,6 +658,8 @@
 
     :global(.mapboxgl-popup-content) {
         padding: 0;
+        max-height: 300px;
+        overflow-y: scroll;
     }
 
     :global(.ql-snow .ql-picker[data-value=arial] span.ql-picker-label) {
