@@ -25,15 +25,18 @@
             const data2 = await response2.json();
             const properties2 = data2.features[99].properties;
             const propertyNames2 = Object.keys(properties2);
-            const numericProperties2 = propertyNames2;
+            let numericProperties2 = propertyNames2.filter((name) => {
+                return typeof properties2[name] === 'number';
+            });
+            numericProperties2 = propertyNames2.sort();  
 
-            // Combine the numeric properties from the first URL with the last four from the second URL
-            const combinedNumericProperties = [...numericProperties1, ...numericProperties2];
+            const layerTitles = numericProperties1.concat(numericProperties2);
 
             choroSettings.update(state => {
                 return {
                     ...state,
-                    layerTitles: [].concat(combinedNumericProperties),
+                    layerTitles: [].concat(layerTitles),
+                    overlayTitles: [].concat(numericProperties2),
                 }
             });
 
@@ -42,6 +45,8 @@
         }
 
     });
+
+
 </script>
 
 <section class="sidebar-section">
@@ -53,28 +58,47 @@
         {/if}
         Demographic Data
     </button>
-    {#if dropdownOpen}
-    <select class="layer-select" bind:value={$choroSettings.selectedLayer}>
-        <option value="None">None</option>
-        <option value="ENROLLED PCT">ENROLLED PCT</option>
-        {#each $choroSettings.layerTitles as layerTitle}
-            <option value={layerTitle}>{layerTitle}</option>
-        {/each}
-    </select>
-
-    <div class="choro-settings">
-       <label for="color-steps-input">Color Steps:</label>
-        <input id="color-steps-input" type="number" bind:value={$choroSettings.colorSteps}/>
-
-        <div class="color-steps-container">
-            <label for="start-color-input">Color 1:</label>
-            <input id="start-color-input" type="color" bind:value={$choroSettings.startColor}/>
-
-            <label for="end-color-input">Color 2:</label>
-            <input id="end-color-input" type="color" bind:value={$choroSettings.endColor}/> 
-        </div>
-    </div>
     
+    {#if dropdownOpen}
+        <label class="choropleth-label" for="layer-select">Choropleth layer:</label>
+        <select class="layer-select" bind:value={$choroSettings.selectedLayer}>
+            <option value="None">None</option>
+            <option value="ENROLLED PCT">ENROLLED PCT</option>
+            {#each $choroSettings.layerTitles as layerTitle}
+                <option value={layerTitle}>{layerTitle}</option>
+            {/each}
+        </select>
+
+        <div class="choro-settings">
+        <label for="color-steps-input">Color Steps:</label>
+            <input id="color-steps-input" type="number" bind:value={$choroSettings.colorSteps}/>
+
+            <div class="color-steps-container">
+                <div class="color-selector">
+                    <label for="start-color-input">Start color:</label>
+                    <input id="start-color-input" type="color" bind:value={$choroSettings.startColor}/> 
+                </div>
+                
+                <div class="color-selector">
+                    <label for="end-color-input">End color:</label>
+                    <input id="end-color-input" type="color" bind:value={$choroSettings.endColor}/> 
+                </div>
+                
+            </div>
+        </div>
+
+        <label class="choropleth-label" for="layer-select">Overlay layer:</label>
+        <select class="layer-select" bind:value={$choroSettings.selectedOverlay}>
+            <option value="None">None</option>
+            {#each $choroSettings.overlayTitles as overlayTitle}   <!-- Use overlayTitles here -->
+                <option value={overlayTitle}>{overlayTitle}</option>
+            {/each}
+        </select>
+        
+        <div class="overlay-selector">
+            <label for="overlay-input">Overlay point color:</label>
+            <input id="overlay-input" type="color" bind:value={$choroSettings.overlayColor}/> 
+        </div>
     {/if}   
 </section>
 
@@ -87,8 +111,14 @@
         margin-bottom: 1px;
     }
 
+    .choropleth-label {
+        margin-left: 1rem;
+        margin-bottom: 0;
+    }
+
     .layer-select {
         margin: 1rem;
+        margin-top: 0;
     }
 
     .sidebar-dropdown-section {
@@ -113,11 +143,18 @@
 
     .color-steps-container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 1rem;
     }
 
     .sidebar-dropdown-section:hover {
         background-color: rgb(255, 255, 255);
+    }
+
+    .overlay-selector {
+        margin-left: 1rem;
+        margin-bottom: 1rem;
     }
 
 </style>

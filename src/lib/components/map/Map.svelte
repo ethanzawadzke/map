@@ -4,7 +4,7 @@
     import "mapbox-gl/dist/mapbox-gl.css";
     import { mapState, choroSettings, datasetState, toolState, circleState, styleState, labelState } from "$lib/utils/store.js";
     import { accessToken, datasetId } from "$lib/utils/mapboxConfig.js";
-    import { drawLayer, clearLayers, handleLayer, createPopup, convertMilesToMeters } from "$lib/utils/mapFunctions.js";
+    import { drawLayer, clearLayers, handleLayer, createPopup, convertMilesToMeters, drawPointsLayer } from "$lib/utils/mapFunctions.js";
     import 'quill/dist/quill.snow.css';
 
 
@@ -274,7 +274,7 @@
 
         initializeMap();
         setupEventHandlers();
-        setupStoreSubscriptions();
+        await setupStoreSubscriptions();
     });
 
     function initializeMap() {
@@ -310,7 +310,8 @@
         const mapSources = {
             'counties-dataset': 'mapbox://ethanzawadzke.clhtts6vu32zj2pobovnqn7tk-91mdg',
             'txzips-6-22-2023-lean': 'mapbox://ethanzawadzke.clj6y2qrc20dc2hnxzx8r30c5-0rfdk',
-            'txlunchdatafinal': 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
+            'txlunchdatafinal': 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5', 
+            'txzips': 'mapbox://ethanzawadzke.clj9snaqs1j202onqvi8zj7d8-6fdgk'
         };
 
         map.on('load', function() {
@@ -556,12 +557,13 @@
         }
     )};
 
-    function setupStoreSubscriptions() {
-         const unsubscribeChoro = choroSettings.subscribe(value => {
+    async function setupStoreSubscriptions() {
+        const unsubscribeChoro = choroSettings.subscribe(async value => {
             console.log("ChoroSettings store changed, now executing function...");
             clearLayers(map);
             drawLayer($choroSettings.selectedLayer, map);
             console.log("ChoroSettings: ", $choroSettings);
+            await drawPointsLayer($choroSettings.selectedOverlay, $choroSettings.overlayColor, map); // Here's where we call our function
         });
 
         const unsubscribeDataset = datasetState.subscribe(value => {
@@ -632,6 +634,11 @@
                     type: 'vector',
                     url: 'mapbox://ethanzawadzke.clihvcvkk12832dp41bdytixx-9xmp5'
                 });
+
+                map.addSource('txzips', {
+                    type: 'vector',
+                    url: 'mapbox://ethanzawadzke.clj9snaqs1j202onqvi8zj7d8-6fdgk'
+                })
 
                 handleLayer(map, $datasetState);
                 drawLayer($choroSettings.selectedLayer, map);

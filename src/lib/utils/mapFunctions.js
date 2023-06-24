@@ -22,6 +22,9 @@ export function clearLayers(map) {
     if (map.getLayer("choro-data-layer")) {
         map.removeLayer("choro-data-layer");
     }
+    if (map.getLayer("choro-data-layer-border")) {
+        map.removeLayer("choro-data-layer-border");
+    }
 }
 
 export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
@@ -216,6 +219,19 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                             'fill-opacity': 0.8
                         }
                     }, 'land-structure-line');
+
+
+                    map.addLayer({
+                        'id': 'choro-data-layer-border',
+                        'type': 'line',
+                        'source': `${source}`,
+                        'source-layer': `${source}`,
+                        'paint': {
+                            'line-color': '#000', // Border color, change this as needed
+                            'line-width': 1 // Border thickness
+                        }
+                    }, 'land-structure-line');
+
 
                     let legend = document.getElementById('legend');
                     legend.innerHTML = `<h4>${layerTitle}</h4>`;
@@ -605,6 +621,8 @@ export function handleLayer(map, dataset) {
     });
 }
 
+
+
 export function createPopup(map, popup, e, features) {
     if (!features.length) {
         return;
@@ -614,7 +632,7 @@ export function createPopup(map, popup, e, features) {
     let feature = features[0]; // the topmost feature
     let properties = feature.properties;
     let description = '';
-    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || properties['ZCTA5CE10'] || 'NAME NOT FOUND';
+    let name = properties['DBA NAME'] || properties['Name'] || properties['NAME'] || properties['LEGAL NAME'] || properties['Business Unit'] || properties['Unit Name'] || properties['FULL ADDRESS'] || properties['ZCTA5CE10'] || properties['zip'] || 'NAME NOT FOUND';
     let header = `<h2>${name}</h2>`;
     for (let property in properties) {
         description += `<strong>${property}:</strong> ${properties[property]}<br>`;
@@ -631,4 +649,79 @@ export const convertMilesToMeters = (miles) => {
 }
 
 
+export function drawPointsLayer(selectedOverlay, overlayColor, map) {
+    if (selectedOverlay === "None") {
+        if (map.getLayer("zip-code-points")) {
+            map.removeLayer("zip-code-points");
+            map.removeSource("zip-code-points");
+        }
+    } else {
+        fetch(`https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/txzips.geojson`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (map.getLayer("zip-code-points")) {
+                    map.removeLayer("zip-code-points");
+                    map.removeSource("zip-code-points");
+                }
 
+                // Initialize min and max with infinity and negative infinity
+                let min = Infinity;
+                let max = -Infinity;
+
+                // Loop over the data to find the min and max
+                for (const feature of data.features) {
+                    const value = Number(feature.properties[selectedOverlay]);
+                    if (!isNaN(value)) {
+                        min = Math.min(min, value);
+                        max = Math.max(max, value);
+                    }
+                }
+
+                map.addSource("zip-code-points", {
+                    type: "geojson",
+                    data,
+                });
+
+                map.addLayer({
+                    id: "zip-code-points",
+                    type: "circle",
+                    source: "zip-code-points",
+                    paint: {
+                        // Interpolate the circle radius based on the selected property
+                        "circle-radius": [
+                            "interpolate", ["linear"],
+                            ["coalesce", ["to-number", ["get", selectedOverlay]], 1],
+                            min, 2, // Map minimum data value to a radius of 1
+                            max, 15 // Map maximum data value to a radius of 10
+                        ],
+                        "circle-color": overlayColor,
+                    },
+                });
+
+                // Return min and max for the next then block
+                return { min, max };
+            })
+            .then(({ min, max }) => {
+
+                let overlayLegend = document.getElementById('overlay-legend');
+                overlayLegend.innerHTML = `<h4>${selectedOverlay}</h4>`;
+
+                // Calculate the step size
+                const step = (max - min) / 4;
+
+                for (let i = 0; i <= 4; i++) {
+                    // Calculate the size of the circle
+                    const circleSize = (min + step * i).toFixed(2);
+
+                    // Calculate the radius of the circle
+                    const radius = 4 + (28 * i / 4); // Adjust this formula as needed
+
+                    // Add the circle and the label to the legend
+                    overlayLegend.innerHTML +=
+                        `<i style="background:${overlayColor};width:${radius}px;height:${radius}px;border-radius:50%;display:inline-block;"></i> ${circleSize}<br>`;
+                }
+            });
+
+
+    }
+}
