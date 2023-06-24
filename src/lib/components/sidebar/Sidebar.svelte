@@ -15,12 +15,11 @@
 </script>
 
 <div class="sidebar">
-    <button class="btn btn-primary" on:click={loadMapData}>Back</button>
+    <!-- <button class="btn btn-primary" on:click={loadMapData}>Back</button> -->
     <LayerSelect />
     <DatasetSelector />
     <MapStyleSelector />
     <MapLayers />
-    <CustomLabels />
 </div>
 
 <div class="legend-container">
