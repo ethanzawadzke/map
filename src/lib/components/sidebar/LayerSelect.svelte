@@ -59,7 +59,10 @@
         Demographic Data
     </button>
     
-    {#if dropdownOpen}
+    <!-- Add conditional checks before rendering the dropdowns -->
+
+{#if dropdownOpen}
+    {#if $choroSettings.layerTitles.length}
         <label class="choropleth-label" for="layer-select">Choropleth layer:</label>
         <select class="layer-select" bind:value={$choroSettings.selectedLayer}>
             <option value="None">None</option>
@@ -86,11 +89,13 @@
                 
             </div>
         </div>
+    {/if}
 
+    {#if $choroSettings.overlayTitles.length}
         <label class="choropleth-label" for="layer-select">Overlay layer:</label>
         <select class="layer-select" bind:value={$choroSettings.selectedOverlay}>
             <option value="None">None</option>
-            {#each $choroSettings.overlayTitles as overlayTitle}   <!-- Use overlayTitles here -->
+            {#each $choroSettings.overlayTitles as overlayTitle}   
                 <option value={overlayTitle}>{overlayTitle}</option>
             {/each}
         </select>
@@ -99,7 +104,9 @@
             <label for="overlay-input">Overlay point color:</label>
             <input id="overlay-input" type="color" bind:value={$choroSettings.overlayColor}/> 
         </div>
-    {/if}   
+    {/if}
+{/if}  
+ 
 </section>
 
 <style>
