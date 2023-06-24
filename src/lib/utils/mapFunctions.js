@@ -234,12 +234,16 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
 
 
                     let legend = document.getElementById('legend');
-                    legend.innerHTML = `<h4>${layerTitle}</h4>`;
-                    for (let i = 0; i < colorStops.length; i += 2) {
-                        let pop = colorStops[i];
-                        let color = colorStops[i + 1];
-                        legend.innerHTML +=
-                            `<i style="background:${color};width:10px;height:10px;display:inline-block;"></i> ${pop.toFixed(2)}<br>`;
+                    if (layerTitle == "None") {
+                        legend.innerHTML = "";
+                    } else {
+                        legend.innerHTML = `<h4>${layerTitle}</h4>`;
+                        for (let i = 0; i < colorStops.length; i += 2) {
+                            let pop = colorStops[i];
+                            let color = colorStops[i + 1];
+                            legend.innerHTML +=
+                                `<i style="background:${color};width:10px;height:10px;display:inline-block;"></i> ${pop.toFixed(2)}<br>`;
+                        }
                     }
 
                     resolve();
@@ -247,6 +251,8 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                 });
 
             console.log(`Drawing layer: ${layerTitle}`);
+        } else if (layerTitle == "None") {
+            legend.innerHTML = "";
         }
     });
 }
@@ -650,11 +656,14 @@ export const convertMilesToMeters = (miles) => {
 
 
 export function drawPointsLayer(selectedOverlay, overlayColor, map) {
+    let overlayLegend = document.getElementById('overlay-legend');
+
     if (selectedOverlay === "None") {
         if (map.getLayer("zip-code-points")) {
             map.removeLayer("zip-code-points");
             map.removeSource("zip-code-points");
         }
+        overlayLegend.innerHTML = "";
     } else {
         fetch(`https://raw.githubusercontent.com/ethanzawadzke/supreme-octo-engine/main/txzips.geojson`)
             .then((response) => response.json())
