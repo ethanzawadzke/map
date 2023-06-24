@@ -58,53 +58,48 @@
         {/if}
         Demographic Data
     </button>
-
+    
     {#if dropdownOpen}
-        {#if $choroSettings.layerTitles.length}
-            <label class="choropleth-label" for="layer-select">Choropleth layer:</label>
-            <select class="layer-select" bind:value={$choroSettings.selectedLayer}>
-                <option value="None">None</option>
-                <option value="ENROLLED PCT">ENROLLED PCT</option>
-                {#each $choroSettings.layerTitles as layerTitle}
-                    <option value={layerTitle}>{layerTitle}</option>
-                {/each}
-            </select>
+        <label class="choropleth-label" for="layer-select">Choropleth layer:</label>
+        <select class="layer-select" bind:value={$choroSettings.selectedLayer}>
+            <option value="None">None</option>
+            <option value="ENROLLED PCT">ENROLLED PCT</option>
+            {#each $choroSettings.layerTitles as layerTitle}
+                <option value={layerTitle}>{layerTitle}</option>
+            {/each}
+        </select>
 
-            <div class="choro-settings">
-            <label for="color-steps-input">Color Steps:</label>
-                <input id="color-steps-input" type="number" bind:value={$choroSettings.colorSteps}/>
+        <div class="choro-settings">
+        <label for="color-steps-input">Color Steps:</label>
+            <input id="color-steps-input" type="number" bind:value={$choroSettings.colorSteps}/>
 
-                <div class="color-steps-container">
-                    <div class="color-selector">
-                        <label for="start-color-input">Start color:</label>
-                        <input id="start-color-input" type="color" bind:value={$choroSettings.startColor}/> 
-                    </div>
-                    
-                    <div class="color-selector">
-                        <label for="end-color-input">End color:</label>
-                        <input id="end-color-input" type="color" bind:value={$choroSettings.endColor}/> 
-                    </div>
-                    
+            <div class="color-steps-container">
+                <div class="color-selector">
+                    <label for="start-color-input">Start color:</label>
+                    <input id="start-color-input" type="color" bind:value={$choroSettings.startColor}/> 
                 </div>
+                
+                <div class="color-selector">
+                    <label for="end-color-input">End color:</label>
+                    <input id="end-color-input" type="color" bind:value={$choroSettings.endColor}/> 
+                </div>
+                
             </div>
-        {/if}
+        </div>
 
-        {#if $choroSettings.overlayTitles.length}
-            <label class="choropleth-label" for="layer-select">Overlay layer:</label>
-            <select class="layer-select" bind:value={$choroSettings.selectedOverlay}>
-                <option value="None">None</option>
-                {#each $choroSettings.overlayTitles as overlayTitle}   
-                    <option value={overlayTitle}>{overlayTitle}</option>
-                {/each}
-            </select>
-            
-            <div class="overlay-selector">
-                <label for="overlay-input">Overlay point color:</label>
-                <input id="overlay-input" type="color" bind:value={$choroSettings.overlayColor}/> 
-            </div>
-        {/if}
-    {/if}  
- 
+        <label class="choropleth-label" for="layer-select">Overlay layer:</label>
+        <select class="layer-select" bind:value={$choroSettings.selectedOverlay}>
+            <option value="None">None</option>
+            {#each $choroSettings.overlayTitles as overlayTitle}   <!-- Use overlayTitles here -->
+                <option value={overlayTitle}>{overlayTitle}</option>
+            {/each}
+        </select>
+        
+        <div class="overlay-selector">
+            <label for="overlay-input">Overlay point color:</label>
+            <input id="overlay-input" type="color" bind:value={$choroSettings.overlayColor}/> 
+        </div>
+    {/if}   
 </section>
 
 <style>

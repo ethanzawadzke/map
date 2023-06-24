@@ -15,256 +15,6 @@
 
     let drawnCircles = {};
 
-    function addContextMenuHandler(circleData, circleObject, map, popup) {
-        circleObject.on('contextmenu', function(e) {
-            e.preventDefault();
-            console.log('Opening context menu...')
-
-            circleState.update(state => {
-                state.contextMenuOpen = true;
-                return state;
-            });
-
-            console.log('Context menu open:', $circleState.contextMenuOpen);
-
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.style.cssText = `
-                display: block;
-                background-color: white;
-                color: black;
-                padding: 5px 10px;
-                border: none;
-                text-align: left;
-                cursor: pointer;
-                width: 100%;
-                box-sizing: border-box;
-            `;
-            deleteButton.onmouseover = function() {
-                this.style.backgroundColor = '#0078D7';
-                this.style.color = 'white';
-            };
-            deleteButton.onmouseout = function() {
-                this.style.backgroundColor = 'white';
-                this.style.color = 'black';
-            };
-            deleteButton.onclick = function() {
-                try {
-                    if(circleObject) {
-                        console.log('Circle exists. Deleting circle object from map...')
-                        console.log('Circle to delete:', circleData.id)
-                        console.log('Drawn circles:', drawnCircles)
-                        circleObject.remove();
-                        delete drawnCircles[circleData.id];
-                        console.log('Circle deleted.')
-                        console.log('New Drawn circles:', drawnCircles)
-                    } else {
-                        console.log('Circle does not exist.')
-                    }
-
-                    circleState.update(state => {
-                        console.log('Deleting circle from state:', circleData.id)
-                        console.log('circle ID:', circleData.id)
-                        console.log('Current circles:', state.circles)
-                        if (state.circles[circleData.id]) {
-                            delete state.circles[circleData.id];
-                        }
-                        console.log('New circles:', state.circles)
-                        return state;
-                    });
-
-                    popup.remove();
-                } catch (error) {
-                    console.error("An error occurred:", error);
-                }
-            };
-
-            const toggleEditButton = document.createElement('button');
-            toggleEditButton.textContent = circleObject.options.editable ? 'Disable Editing' : 'Enable Editing';
-            toggleEditButton.style.cssText = `
-                display: block;
-                background-color: white;
-                color: black;
-                padding: 5px 10px;
-                border: none;
-                text-align: left;
-                cursor: pointer;
-                width: 100%;
-                box-sizing: border-box;
-            `;
-            toggleEditButton.onmouseover = function() {
-                this.style.backgroundColor = '#0078D7';
-                this.style.color = 'white';
-            };
-            toggleEditButton.onmouseout = function() {
-                this.style.backgroundColor = 'white';
-                this.style.color = 'black';
-            };
-            toggleEditButton.onclick = function() {
-                //remove current circle from drawn circles
-                delete drawnCircles[circleData.id];
-
-                //remove current circle from map
-                circleObject.remove();
-
-                //remove current circle from state
-                circleState.update(state => {
-                    console.log('Deleting circle from state:', circleData.id)
-                    console.log('circle ID:', circleData.id)
-                    console.log('Current circles:', state.circles)
-                    if (state.circles[circleData.id]) {
-                        delete state.circles[circleData.id];
-                    }
-                    console.log('New circles:', state.circles)
-                    return state;
-                });
-
-                //remove popup
-                popup.remove();
-
-                //add new circle to state
-                circleState.update(state => {
-                    console.log('Adding circle to state:', circleData.id)
-                    console.log('circle ID:', circleData.id)
-                    console.log('Current circles:', state.circles)
-                    state.circles[circleData.id] = {
-                        id: circleData.id,
-                        center: circleData.center,
-                        radius: circleData.radius,
-                        options: circleData.options,
-                        editable: !circleData.editable,
-                        color: circleData.color,
-                    };
-                    console.log('New circles:', state.circles)
-                    return state;
-                });
-            };
-
-
-            const buttonContainer = document.createElement('div');
-            buttonContainer.appendChild(deleteButton);
-            buttonContainer.appendChild(toggleEditButton);
-
-            const countButton = document.createElement('button');
-            countButton.textContent = 'Count Features';
-            countButton.style.cssText = `
-                display: block;
-                background-color: white;
-                color: black;
-                padding: 5px 10px;
-                border: none;
-                text-align: left;
-                cursor: pointer;
-                width: 100%;
-                box-sizing: border-box;
-            `;
-            countButton.onmouseover = function() {
-                this.style.backgroundColor = '#0078D7';
-                this.style.color = 'white';
-            };
-            countButton.onmouseout = function() {
-                this.style.backgroundColor = 'white';
-                this.style.color = 'black';
-            };
-            countButton.onclick = function() {
-                // Get the circle's center and radius
-                let center = circleObject.getCenter();
-                let radius = circleObject.getRadius();  // Assuming this is in meters
-
-                // Convert the circle center to a LngLat object
-                let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
-
-                // Get all active layers
-                let activeLayers = $datasetState.filter(dataset => dataset.enabled);
-
-                // Initialize the total feature count
-                let totalFeatureCount = 0;
-
-                // Initialize the total beds count
-                let totalBedsCount = 0;
-
-                // Initialize the total slots count
-                let totalSlotsCount = 0;
-
-
-                let testflag = false;
-
-                console.log(activeLayers);
-                let featureSet = new Set();
-
-                // For each active layer...
-                for (let dataset of activeLayers) {
-                    // Query all rendered features in the current layer without specifying bounds
-                    let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
-
-                    for (let feature of features) {
-                        // Convert the feature coordinates to a LngLat object
-                        let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
-
-                        // Calculate the distance from the circle center to the feature in meters
-                        let distance = lngLatCenter.distanceTo(lngLatFeature);
-
-                        // If the distance is less than the circle radius, the feature lies within the circle
-                        if (distance < radius) {
-                            // Add the feature to the set
-                            featureSet.add(JSON.stringify(feature));
-                        }
-                    }
-                }
-
-                // Convert the Set back to an array and parse each feature back into an object
-                let featuresWithinCircle = Array.from(featureSet).map(featureStr => JSON.parse(featureStr));
-
-                console.log("Features within circle:", featuresWithinCircle);
-
-                popup.remove();
-
-                let totalBeds = 0;
-                let totalSlots = 0;
-
-                for (let feature of featuresWithinCircle) {
-                // If 'BEDS' and 'SLOTS' aren't null or 0, add to both counts
-                if (feature.properties.BEDS != null && feature.properties.BEDS != 0 && feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
-                    console.log("Feature:", feature.properties.BEDS, feature.properties.SLOTS);
-                    totalBeds += feature.properties.BEDS/2;
-                    totalSlots += feature.properties.SLOTS/2;
-                    totalFeatureCount++;
-
-                }
-                // Else if 'BEDS' isn't null or 0, add to total beds
-                else if (feature.properties.BEDS != null && feature.properties.BEDS != 0) {
-                    totalBeds += feature.properties.BEDS;
-                    totalFeatureCount++;
-                }
-                // Else if 'SLOTS' isn't null or 0, add to total slots
-                else if (feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
-                    totalSlots += feature.properties.SLOTS;
-                    totalFeatureCount++;
-                }
-            }
-
-
-                console.log("Total features within circle:", totalFeatureCount);
-                console.log("Total beds within circle:", totalBeds);
-                console.log("Total slots within circle:", totalSlots);
-
-                //create alert with counts
-                alert("Total features within circle: " + totalFeatureCount + "\nTotal beds within circle: " + totalBeds + "\nTotal slots within circle: " + totalSlots);
-
-                totalFeatureCount = 0;
-                
-            };
-
-
-
-            buttonContainer.appendChild(countButton);
-
-            popup.setLngLat(e.lngLat)
-                .setDOMContent(buttonContainer)
-                .addTo(map);
-        });
-    }
-    
     onMount(async () => {
         const module = await import('mapbox-gl-circle');
         MapboxCircle = module.default;
@@ -645,6 +395,257 @@
             });
         });
     }
+
+    function addContextMenuHandler(circleData, circleObject, map, popup) {
+        circleObject.on('contextmenu', function(e) {
+            e.preventDefault();
+            console.log('Opening context menu...')
+
+            circleState.update(state => {
+                state.contextMenuOpen = true;
+                return state;
+            });
+
+            console.log('Context menu open:', $circleState.contextMenuOpen);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.style.cssText = `
+                display: block;
+                background-color: white;
+                color: black;
+                padding: 5px 10px;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                width: 100%;
+                box-sizing: border-box;
+            `;
+            deleteButton.onmouseover = function() {
+                this.style.backgroundColor = '#0078D7';
+                this.style.color = 'white';
+            };
+            deleteButton.onmouseout = function() {
+                this.style.backgroundColor = 'white';
+                this.style.color = 'black';
+            };
+            deleteButton.onclick = function() {
+                try {
+                    if(circleObject) {
+                        console.log('Circle exists. Deleting circle object from map...')
+                        console.log('Circle to delete:', circleData.id)
+                        console.log('Drawn circles:', drawnCircles)
+                        circleObject.remove();
+                        delete drawnCircles[circleData.id];
+                        console.log('Circle deleted.')
+                        console.log('New Drawn circles:', drawnCircles)
+                    } else {
+                        console.log('Circle does not exist.')
+                    }
+
+                    circleState.update(state => {
+                        console.log('Deleting circle from state:', circleData.id)
+                        console.log('circle ID:', circleData.id)
+                        console.log('Current circles:', state.circles)
+                        if (state.circles[circleData.id]) {
+                            delete state.circles[circleData.id];
+                        }
+                        console.log('New circles:', state.circles)
+                        return state;
+                    });
+
+                    popup.remove();
+                } catch (error) {
+                    console.error("An error occurred:", error);
+                }
+            };
+
+            const toggleEditButton = document.createElement('button');
+            toggleEditButton.textContent = circleObject.options.editable ? 'Disable Editing' : 'Enable Editing';
+            toggleEditButton.style.cssText = `
+                display: block;
+                background-color: white;
+                color: black;
+                padding: 5px 10px;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                width: 100%;
+                box-sizing: border-box;
+            `;
+            toggleEditButton.onmouseover = function() {
+                this.style.backgroundColor = '#0078D7';
+                this.style.color = 'white';
+            };
+            toggleEditButton.onmouseout = function() {
+                this.style.backgroundColor = 'white';
+                this.style.color = 'black';
+            };
+            toggleEditButton.onclick = function() {
+                //remove current circle from drawn circles
+                delete drawnCircles[circleData.id];
+
+                //remove current circle from map
+                circleObject.remove();
+
+                //remove current circle from state
+                circleState.update(state => {
+                    console.log('Deleting circle from state:', circleData.id)
+                    console.log('circle ID:', circleData.id)
+                    console.log('Current circles:', state.circles)
+                    if (state.circles[circleData.id]) {
+                        delete state.circles[circleData.id];
+                    }
+                    console.log('New circles:', state.circles)
+                    return state;
+                });
+
+                //remove popup
+                popup.remove();
+
+                //add new circle to state
+                circleState.update(state => {
+                    console.log('Adding circle to state:', circleData.id)
+                    console.log('circle ID:', circleData.id)
+                    console.log('Current circles:', state.circles)
+                    state.circles[circleData.id] = {
+                        id: circleData.id,
+                        center: circleData.center,
+                        radius: circleData.radius,
+                        options: circleData.options,
+                        editable: !circleData.editable,
+                        color: circleData.color,
+                    };
+                    console.log('New circles:', state.circles)
+                    return state;
+                });
+            };
+
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.appendChild(deleteButton);
+            buttonContainer.appendChild(toggleEditButton);
+
+            const countButton = document.createElement('button');
+            countButton.textContent = 'Count Features';
+            countButton.style.cssText = `
+                display: block;
+                background-color: white;
+                color: black;
+                padding: 5px 10px;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                width: 100%;
+                box-sizing: border-box;
+            `;
+            countButton.onmouseover = function() {
+                this.style.backgroundColor = '#0078D7';
+                this.style.color = 'white';
+            };
+            countButton.onmouseout = function() {
+                this.style.backgroundColor = 'white';
+                this.style.color = 'black';
+            };
+            countButton.onclick = function() {
+                // Get the circle's center and radius
+                let center = circleObject.getCenter();
+                let radius = circleObject.getRadius();  // Assuming this is in meters
+
+                // Convert the circle center to a LngLat object
+                let lngLatCenter = new mapboxgl.LngLat(center.lng, center.lat);
+
+                // Get all active layers
+                let activeLayers = $datasetState.filter(dataset => dataset.enabled);
+
+                // Initialize the total feature count
+                let totalFeatureCount = 0;
+
+                // Initialize the total beds count
+                let totalBedsCount = 0;
+
+                // Initialize the total slots count
+                let totalSlotsCount = 0;
+
+
+                let testflag = false;
+
+                console.log(activeLayers);
+                let featureSet = new Set();
+
+                // For each active layer...
+                for (let dataset of activeLayers) {
+                    // Query all rendered features in the current layer without specifying bounds
+                    let features = map.queryRenderedFeatures({layers: [dataset.layerTitle]});
+
+                    for (let feature of features) {
+                        // Convert the feature coordinates to a LngLat object
+                        let lngLatFeature = new mapboxgl.LngLat(feature.geometry.coordinates[0], feature.geometry.coordinates[1]);
+
+                        // Calculate the distance from the circle center to the feature in meters
+                        let distance = lngLatCenter.distanceTo(lngLatFeature);
+
+                        // If the distance is less than the circle radius, the feature lies within the circle
+                        if (distance < radius) {
+                            // Add the feature to the set
+                            featureSet.add(JSON.stringify(feature));
+                        }
+                    }
+                }
+
+                // Convert the Set back to an array and parse each feature back into an object
+                let featuresWithinCircle = Array.from(featureSet).map(featureStr => JSON.parse(featureStr));
+
+                console.log("Features within circle:", featuresWithinCircle);
+
+                popup.remove();
+
+                let totalBeds = 0;
+                let totalSlots = 0;
+
+                for (let feature of featuresWithinCircle) {
+                // If 'BEDS' and 'SLOTS' aren't null or 0, add to both counts
+                if (feature.properties.BEDS != null && feature.properties.BEDS != 0 && feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
+                    console.log("Feature:", feature.properties.BEDS, feature.properties.SLOTS);
+                    totalBeds += feature.properties.BEDS/2;
+                    totalSlots += feature.properties.SLOTS/2;
+                    totalFeatureCount++;
+
+                }
+                // Else if 'BEDS' isn't null or 0, add to total beds
+                else if (feature.properties.BEDS != null && feature.properties.BEDS != 0) {
+                    totalBeds += feature.properties.BEDS;
+                    totalFeatureCount++;
+                }
+                // Else if 'SLOTS' isn't null or 0, add to total slots
+                else if (feature.properties.SLOTS != null && feature.properties.SLOTS != 0) {
+                    totalSlots += feature.properties.SLOTS;
+                    totalFeatureCount++;
+                }
+            }
+
+
+                console.log("Total features within circle:", totalFeatureCount);
+                console.log("Total beds within circle:", totalBeds);
+                console.log("Total slots within circle:", totalSlots);
+
+                //create alert with counts
+                alert("Total features within circle: " + totalFeatureCount + "\nTotal beds within circle: " + totalBeds + "\nTotal slots within circle: " + totalSlots);
+
+                totalFeatureCount = 0;
+                
+            };
+
+
+
+            buttonContainer.appendChild(countButton);
+
+            popup.setLngLat(e.lngLat)
+                .setDOMContent(buttonContainer)
+                .addTo(map);
+        });
+    }
+    
 </script>
 
 

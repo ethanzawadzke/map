@@ -48,6 +48,7 @@ export const circleState = writable({
 
 export const choroSettings = writable({
     layerTitles: [],
+    overlayTitles: [],
     selectedLayer: 'None',
     selectedOverlay: 'None',
     colorSteps: 8,
