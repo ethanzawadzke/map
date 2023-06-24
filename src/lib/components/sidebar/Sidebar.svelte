@@ -62,5 +62,7 @@
 
     #overlay-legend {
         right: 200px;
+        height: fit-content;
+        align-self: end;
     }
 </style>
