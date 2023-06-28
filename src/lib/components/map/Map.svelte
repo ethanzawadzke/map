@@ -43,9 +43,10 @@
         map.addControl(test, 'top-right');
 
         const draw = new MapboxDraw({
-            displayControlsDefault: true,
+            displayControlsDefault: false,
             // Select which mapbox-gl-draw control buttons to add to the map.
             controls: {
+                line_string: true,
                 polygon: true,
                 trash: true
             },
@@ -189,60 +190,53 @@
         let lastLength = 0;
 
         function updateArea(e) {
-    const data = draw.getAll();
-    const answer = document.getElementById('calculated-area');
-    const calculationBox = document.getElementById('calculation-box');
+            const data = draw.getAll();
+            const answer = document.getElementById('calculated-area');
+            const calculationBox = document.getElementById('calculation-box');
 
-    if (data.features.length > 0) {
-        let hasLine = false;
-        let hasPolygon = false;
+            if (data.features.length > 0) {
+                let hasLine = false;
+                let hasPolygon = false;
 
-        data.features.forEach((feature) => {
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                    const area = turf.area(feature);
-                    lastArea = Math.round((area * 0.000000386102) * 100) / 100;
-                    hasPolygon = true;
-                    break;
-                case 'LineString':
-                    const length = turf.length(feature, {units: 'miles'});
-                    lastLength = Math.round(length * 100) / 100;
-                    hasLine = true;
-                    break;
-                default:
-                    break;
+                data.features.forEach((feature) => {
+                    switch (feature.geometry.type) {
+                        case 'Polygon':
+                            const area = turf.area(feature);
+                            lastArea = Math.round((area * 0.000000386102) * 100) / 100;
+                            hasPolygon = true;
+                            break;
+                        case 'LineString':
+                            const length = turf.length(feature, {units: 'miles'});
+                            lastLength = Math.round(length * 100) / 100;
+                            hasLine = true;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+
+                if (!hasPolygon) lastArea = 0;
+                if (!hasLine) lastLength = 0;
+
+            } else {
+                if (e.type === 'draw.delete') {
+                    lastArea = 0;
+                    lastLength = 0;
+                }
             }
-        });
 
-        if (!hasPolygon) lastArea = 0;
-        if (!hasLine) lastLength = 0;
-
-    } else {
-        if (e.type === 'draw.delete') {
-            lastArea = 0;
-            lastLength = 0;
+            if (lastArea === 0 && lastLength === 0) {
+                answer.style.display = 'none';
+                calculationBox.style.display = 'none';
+            } else {
+                answer.style.display = 'flex';
+                answer.innerHTML = `
+                    <strong>Polygon Area:</strong> ${lastArea.toFixed(2)} square miles
+                    <strong>Line Distance:</strong> ${lastLength.toFixed(2)} miles
+                `;
+                calculationBox.style.display = 'flex';
+            }
         }
-    }
-
-    if (lastArea === 0 && lastLength === 0) {
-        answer.style.display = 'none';
-        calculationBox.style.display = 'none';
-    } else {
-        answer.style.display = 'flex';
-        answer.innerHTML = `
-            <strong>Polygon Area:</strong> ${lastArea.toFixed(2)} square miles
-            <strong>Line Distance:</strong> ${lastLength.toFixed(2)} miles
-        `;
-        calculationBox.style.display = 'flex';
-    }
-}
-
-
-
-
-
-
-                
 
         mapState.update(state => {
             return {
