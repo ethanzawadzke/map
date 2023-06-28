@@ -21,6 +21,7 @@
 <div class="toolbar">
     <Button buttonName='Label Tool' active={$toolState.tool === 'Label'} on:click={() => selectTool('Label')}/>
     <Button buttonName='Circle Tool' active={$toolState.tool === 'Circle'} on:click={() => selectTool('Circle')}/>
+    <!-- <Button buttonName='Ruler' active={$toolState.tool === 'Ruler'} on:click={() => selectTool('Ruler')}/> -->
 
 
     {#if $toolState.tool === 'Circle'}
@@ -107,5 +108,6 @@
     #color-picker {
         width: 50%;
     }
+    
 
 </style>

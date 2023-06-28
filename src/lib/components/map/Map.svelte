@@ -6,6 +6,8 @@
     import { accessToken, datasetId } from "$lib/utils/mapboxConfig.js";
     import { drawLayer, clearLayers, handleLayer, createPopup, convertMilesToMeters, drawPointsLayer } from "$lib/utils/mapFunctions.js";
     import 'quill/dist/quill.snow.css';
+    import MapboxDraw from '@mapbox/mapbox-gl-draw';
+    import * as turf from '@turf/turf';
 
 
     let mapContainer;
@@ -38,10 +40,209 @@
         });
 
         const test = new mapboxgl.NavigationControl();
-        console.log('test:', test);
-
         map.addControl(test, 'top-right');
-        
+
+        const draw = new MapboxDraw({
+            displayControlsDefault: true,
+            // Select which mapbox-gl-draw control buttons to add to the map.
+            controls: {
+                polygon: true,
+                trash: true
+            },
+            styles: [
+                // ACTIVE (being drawn)
+                // line stroke
+                {
+                    "id": "gl-draw-line",
+                    "type": "line",
+                    "filter": ["all", ["==", "$type", "LineString"], ["==", "active", "true"]],
+                    "layout": {
+                        "line-cap": "round",
+                        "line-join": "round"
+                    },
+                    "paint": {
+                        "line-color": "#EE7F09",
+                        "line-dasharray": [0.2, 2],
+                        "line-width": 3
+                    }
+                },
+                // polygon fill
+                {
+                    "id": "gl-draw-polygon-fill",
+                    "type": "fill",
+                    "filter": ["all", ["==", "$type", "Polygon"], ["==", "active", "true"]],
+                    "paint": {
+                    "fill-color": "#D20C0C",
+                    "fill-outline-color": "#EE7F09",
+                    "fill-opacity": 0.1
+                    }
+                },
+                // polygon mid points
+                {
+                'id': 'gl-draw-polygon-midpoint',
+                'type': 'circle',
+                'filter': ['all',
+                    ['==', '$type', 'Point'],
+                    ['==', 'meta', 'midpoint']],
+                'paint': {
+                    'circle-radius': 3,
+                    'circle-color': '#EE7F09'
+                    },
+                },
+                // polygon outline stroke
+                // This doesn't style the first edge of the polygon, which uses the line stroke styling instead
+                {
+                    "id": "gl-draw-polygon-stroke-active",
+                    "type": "line",
+                    "filter": ["all", ["==", "$type", "Polygon"], ["==", "active", "true"]],
+                    "layout": {
+                    "line-cap": "round",
+                    "line-join": "round"
+                    },
+                    "paint": {
+                    "line-color": "#EE7F09",
+                    "line-dasharray": [0.2, 2],
+                    "line-width": 3
+                    }
+                },
+                // vertex point halos
+                {
+                    "id": "gl-draw-polygon-and-line-vertex-halo-active",
+                    "type": "circle",
+                    "filter": ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"],],
+                    "paint": {
+                    "circle-radius": 5,
+                    "circle-color": "#FFF"
+                    }
+                },
+                // vertex points
+                {
+                    "id": "gl-draw-polygon-and-line-vertex-active",
+                    "type": "circle",
+                    "filter": ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"],],
+                    "paint": {
+                    "circle-radius": 3,
+                    "circle-color": "#EE7F09",
+                    }
+                },
+
+                // INACTIVE
+                // line stroke
+                {
+                    "id": "gl-draw-line-inactive",
+                    "type": "line",
+                    "filter": ["all", ["==", "$type", "LineString"], ["==", "active", "false"]],
+                    "layout": {
+                        "line-cap": "round",
+                        "line-join": "round"
+                    },
+                    "paint": {
+                        "line-color": "#000",
+                        "line-width": 3
+                    }
+                },
+                // polygon fill
+                {
+                    "id": "gl-draw-polygon-fill-inactive",
+                    "type": "fill",
+                    "filter": ["all", ["==", "$type", "Polygon"], ["==", "active", "false"]],
+                    "paint": {
+                    "fill-color": "#000",
+                    "fill-outline-color": "#000",
+                    "fill-opacity": 0.1
+                    }
+                },
+                // polygon outline
+                {
+                    "id": "gl-draw-polygon-stroke-inactive",
+                    "type": "line",
+                    "filter": ["all", ["==", "$type", "Polygon"], ["==", "active", "false"]],
+                    "layout": {
+                    "line-cap": "round",
+                    "line-join": "round"
+                    },
+                    "paint": {
+                    "line-color": "#000",
+                    "line-width": 3
+                    }
+                }
+                ],
+            // Set mapbox-gl-draw to draw by default.
+            // The user does not have to click the polygon control button first.
+            /* defaultMode: 'draw_polygon' */
+        });
+        map.addControl(draw);
+
+        map.on('draw.modechange', (event) => {
+            if (event.mode.startsWith('draw')) {
+                toolState.set({ tool: 'Polygon' });
+            } else {
+                toolState.set({ tool: null });
+            }
+        });
+
+        map.on('draw.create', updateArea);
+        map.on('draw.delete', updateArea);
+        map.on('draw.update', updateArea);
+
+        let lastArea = 0;
+        let lastLength = 0;
+
+        function updateArea(e) {
+    const data = draw.getAll();
+    const answer = document.getElementById('calculated-area');
+    const calculationBox = document.getElementById('calculation-box');
+
+    if (data.features.length > 0) {
+        let hasLine = false;
+        let hasPolygon = false;
+
+        data.features.forEach((feature) => {
+            switch (feature.geometry.type) {
+                case 'Polygon':
+                    const area = turf.area(feature);
+                    lastArea = Math.round((area * 0.000000386102) * 100) / 100;
+                    hasPolygon = true;
+                    break;
+                case 'LineString':
+                    const length = turf.length(feature, {units: 'miles'});
+                    lastLength = Math.round(length * 100) / 100;
+                    hasLine = true;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        if (!hasPolygon) lastArea = 0;
+        if (!hasLine) lastLength = 0;
+
+    } else {
+        if (e.type === 'draw.delete') {
+            lastArea = 0;
+            lastLength = 0;
+        }
+    }
+
+    if (lastArea === 0 && lastLength === 0) {
+        answer.style.display = 'none';
+        calculationBox.style.display = 'none';
+    } else {
+        answer.style.display = 'flex';
+        answer.innerHTML = `
+            <strong>Polygon Area:</strong> ${lastArea.toFixed(2)} square miles
+            <strong>Line Distance:</strong> ${lastLength.toFixed(2)} miles
+        `;
+        calculationBox.style.display = 'flex';
+    }
+}
+
+
+
+
+
+
+                
 
         mapState.update(state => {
             return {
@@ -293,11 +494,13 @@
                             state.tool = null;
                             return state;
                         });
+                    } else if ($toolState.tool === "Polygon") {
+                        console.log("Polygon tool selected");
                     }
-
                     else {
                     var features = map.queryRenderedFeatures(e.point);
-                    if (features.length > 0) {
+                    if (features.length > 0 && features[0].properties["meta:type"] != "Polygon" && features[0].properties["meta:type"] != "LineString" && features[0].properties.meta != "vertex" && Object.keys(features[0].properties).length > 1) {
+                        console.log(features[0].properties)
                         const popup = new mapboxgl.Popup();  
                         createPopup(map, popup, e, features);  
                     }

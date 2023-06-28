@@ -15,7 +15,6 @@
 </script>
 
 <div class="sidebar">
-    <!-- <button class="btn btn-primary" on:click={loadMapData}>Back</button> -->
     <LayerSelect />
     <DatasetSelector />
     <MapStyleSelector />
@@ -23,10 +22,15 @@
 </div>
 
 <div class="legend-container">
+    <div class="calculation-box" id="calculation-box">
+        <div id="calculated-area">
+            <!-- <b>Polygon area:</b> 0.00 <br> 
+            <b>Line distance:</b> 0.00 -->
+        </div>
+    </div>
     <div id="legend" class="legend"></div>
     <div id="overlay-legend" class="legend"></div>
 </div>
-
 
 <style>
     .sidebar {
@@ -57,11 +61,36 @@
         font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
         z-index: 1;
         padding: 10px;
+        height: fit-content;
+        align-self: end;
     }
 
     #overlay-legend {
         right: 200px;
         height: fit-content;
         align-self: end;
+    }
+
+    .calculation-box {
+        display: none;
+        bottom: 40px;
+        left: 10px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 15px;
+        text-align: center;
+    }
+
+    #calculated-area {
+        display: none;
+        flex-direction: column;
+        height: fit-content;
+        width: fit-content;
+    }
+ 
+    p {
+        font-family: 'Open Sans';
+        margin: 0;
+        font-size: 13px;
+        padding: 0;
     }
 </style>
