@@ -27,7 +27,7 @@ export function clearLayers(map) {
     }
 }
 
-export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
+export function drawLayer(layerTitle, map, borderState) { // <-- pass map as a parameter
     return new Promise((resolve, reject) => {
         const validTitles = [
             'Median Income Rank (0-99)',
@@ -221,16 +221,27 @@ export function drawLayer(layerTitle, map) { // <-- pass map as a parameter
                     }, 'land-structure-line');
 
 
-                    map.addLayer({
-                        'id': 'choro-data-layer-border',
-                        'type': 'line',
-                        'source': `${source}`,
-                        'source-layer': `${source}`,
-                        'paint': {
-                            'line-color': '#000', // Border color, change this as needed
-                            'line-width': 1 // Border thickness
+                    // Check if the border layer already exists
+                    if (map.getLayer('choro-data-layer-border')) {
+                        // If $choroSettings.borderEnabled is false, remove the layer
+                        if (!borderState) {
+                            map.removeLayer('choro-data-layer-border');
                         }
-                    }, 'land-structure-line');
+                    } else {
+                        // If $choroSettings.borderEnabled is true, add the layer
+                        if (borderState) {
+                            map.addLayer({
+                                'id': 'choro-data-layer-border',
+                                'type': 'line',
+                                'source': `${source}`,
+                                'source-layer': `${source}`,
+                                'paint': {
+                                    'line-color': '#000', // Border color, change this as needed
+                                    'line-width': .5 // Border thickness
+                                }
+                            }, 'land-structure-line');
+                        }
+                    }
 
 
                     let legend = document.getElementById('legend');

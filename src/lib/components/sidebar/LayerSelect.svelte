@@ -99,6 +99,11 @@
             <label for="overlay-input">Overlay point color:</label>
             <input id="overlay-input" type="color" bind:value={$choroSettings.overlayColor}/> 
         </div>
+
+        <div class="overlay-selector">
+            <label for="overlay-input">Choropleth borders:</label>
+            <input id="overlay-input" type="checkbox" bind:checked={$choroSettings.borderEnabled}/>
+        </div>
     {/if}   
 </section>
 

@@ -51,6 +51,7 @@ export const choroSettings = writable({
     overlayTitles: [],
     selectedLayer: 'None',
     selectedOverlay: 'None',
+    borderEnabled: false,
     colorSteps: 8,
     startColor: '#f7fbff',
     endColor: '#08306b',

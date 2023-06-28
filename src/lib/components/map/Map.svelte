@@ -150,7 +150,7 @@
                     "paint": {
                     "fill-color": "#000",
                     "fill-outline-color": "#000",
-                    "fill-opacity": 0.1
+                    "fill-opacity": 0.4
                     }
                 },
                 // polygon outline
@@ -508,7 +508,7 @@
         const unsubscribeChoro = choroSettings.subscribe(async value => {
             console.log("ChoroSettings store changed, now executing function...");
             clearLayers(map);
-            drawLayer($choroSettings.selectedLayer, map);
+            drawLayer($choroSettings.selectedLayer, map, $choroSettings.borderEnabled);
             console.log("ChoroSettings: ", $choroSettings);
             await drawPointsLayer($choroSettings.selectedOverlay, $choroSettings.overlayColor, map); // Here's where we call our function
         });
@@ -588,7 +588,7 @@
                 })
 
                 handleLayer(map, $datasetState);
-                drawLayer($choroSettings.selectedLayer, map);
+                drawLayer($choroSettings.selectedLayer, map, $choroSettings.borderEnabled);
             });
         });
     }

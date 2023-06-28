@@ -78,6 +78,8 @@
         background-color: rgba(255, 255, 255, 0.9);
         padding: 15px;
         text-align: center;
+        height: fit-content;
+        align-self: end;
     }
 
     #calculated-area {
